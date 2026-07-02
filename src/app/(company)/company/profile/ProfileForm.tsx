@@ -96,7 +96,7 @@ export function CompanyProfileForm({ profile, userId }: CompanyProfileFormProps)
           type="file"
           accept="image/png,image/jpeg"
           onChange={handleLogoUpload}
-          className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+          className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
         />
         {uploading && <p className="text-xs text-gray-500 mt-1">Uploading…</p>}
       </div>
@@ -108,7 +108,7 @@ export function CompanyProfileForm({ profile, userId }: CompanyProfileFormProps)
         <input
           id="companyName"
           {...register("companyName")}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
         {errors.companyName && <p className="mt-1 text-xs text-red-600">{errors.companyName.message}</p>}
       </div>
@@ -119,7 +119,7 @@ export function CompanyProfileForm({ profile, userId }: CompanyProfileFormProps)
           id="description"
           {...register("description")}
           rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
           placeholder="Tell job seekers about your company…"
         />
         {errors.description && <p className="mt-1 text-xs text-red-600">{errors.description.message}</p>}
@@ -131,7 +131,7 @@ export function CompanyProfileForm({ profile, userId }: CompanyProfileFormProps)
           <input
             id="industry"
             {...register("industry")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             placeholder="e.g. Technology"
           />
         </div>
@@ -141,7 +141,7 @@ export function CompanyProfileForm({ profile, userId }: CompanyProfileFormProps)
             id="website"
             type="url"
             {...register("website")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             placeholder="https://company.com"
           />
           {errors.website && <p className="mt-1 text-xs text-red-600">{errors.website.message}</p>}
@@ -151,7 +151,7 @@ export function CompanyProfileForm({ profile, userId }: CompanyProfileFormProps)
       <button
         type="submit"
         disabled={isSubmitting}
-        className="px-6 py-2.5 bg-indigo-700 text-white text-sm font-semibold rounded-lg hover:bg-indigo-800 disabled:opacity-60 transition"
+        className="px-6 py-2.5 bg-teal-700 text-white text-sm font-semibold rounded-lg hover:bg-teal-800 disabled:opacity-60 transition"
       >
         {isSubmitting ? "Saving…" : "Save profile"}
       </button>

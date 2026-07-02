@@ -47,7 +47,7 @@ export default async function ApplicationsPage() {
             action={
               <Link
                 href="/seeker/feed"
-                className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition shadow-sm"
+                className="px-5 py-2.5 bg-teal-600 text-white text-sm font-medium rounded-xl hover:bg-teal-700 transition shadow-sm"
               >
                 Browse jobs
               </Link>
@@ -75,7 +75,7 @@ export default async function ApplicationsPage() {
                     <div>
                       <Link
                         href={`/jobs/${job?._id}`}
-                        className="text-lg font-semibold text-gray-900 hover:text-indigo-700 transition"
+                        className="text-lg font-semibold text-gray-900 hover:text-teal-700 transition"
                       >
                         {job?.title ?? "Job (removed)"}
                       </Link>

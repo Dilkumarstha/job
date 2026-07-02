@@ -115,7 +115,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
       {/* Navbar */}
       <header className="bg-white border-b border-gray-100">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/" className="text-lg font-bold text-indigo-700">
+          <Link href="/" className="text-lg font-bold text-teal-700">
             HireHub
           </Link>
           <div className="flex gap-3">
@@ -128,7 +128,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                       ? "/company/dashboard"
                       : "/admin/dashboard"
                 }
-                className="px-4 py-1.5 text-sm font-medium text-indigo-700 border border-indigo-200 rounded-lg hover:bg-indigo-50 transition"
+                className="px-4 py-1.5 text-sm font-medium text-teal-700 border border-teal-200 rounded-lg hover:bg-teal-50 transition"
               >
                 Dashboard
               </Link>
@@ -142,7 +142,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                 </Link>
                 <Link
                   href="/signup/seeker"
-                  className="px-4 py-1.5 text-sm font-medium text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 transition"
+                  className="px-4 py-1.5 text-sm font-medium text-white bg-teal-700 rounded-lg hover:bg-teal-800 transition"
                 >
                   Get started
                 </Link>
@@ -160,7 +160,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
             <div className="bg-white rounded-2xl border border-gray-100 p-6">
               <div className="flex items-start gap-4">
                 {/* Company logo / placeholder */}
-                <div className="w-14 h-14 rounded-xl bg-indigo-50 flex items-center justify-center text-2xl shrink-0 border border-indigo-100">
+                <div className="w-14 h-14 rounded-xl bg-teal-50 flex items-center justify-center text-2xl shrink-0 border border-teal-100">
                   {company?.logoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -180,7 +180,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                   <p className="text-gray-600 mt-0.5">
                     <Link
                       href={`/companies/${job.companyId}`}
-                      className="hover:text-indigo-700 hover:underline transition"
+                      className="hover:text-teal-700 hover:underline transition"
                     >
                       {company?.companyName ?? "Company"}
                     </Link>
@@ -241,7 +241,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                   {job.skillsRequired.map((skill) => (
                     <span
                       key={skill}
-                      className="px-3 py-1 bg-indigo-50 text-indigo-700 text-sm rounded-full border border-indigo-100"
+                      className="px-3 py-1 bg-teal-50 text-teal-700 text-sm rounded-full border border-teal-100"
                     >
                       {skill}
                     </span>
@@ -284,7 +284,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               {!session && !isExpired && (
                 <Link
                   href={`/login`}
-                  className="block w-full py-2.5 text-center bg-indigo-700 text-white text-sm font-semibold rounded-xl hover:bg-indigo-800 transition"
+                  className="block w-full py-2.5 text-center bg-teal-700 text-white text-sm font-semibold rounded-xl hover:bg-teal-800 transition"
                 >
                   Sign in to apply
                 </Link>
@@ -327,7 +327,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                     href={company.website}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-block mt-2 text-xs text-indigo-600 hover:underline"
+                    className="inline-block mt-2 text-xs text-teal-600 hover:underline"
                   >
                     {company.website} ↗
                   </a>

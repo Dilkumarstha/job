@@ -66,7 +66,7 @@ export default function PostJobForm({
         <input
           id="title"
           {...register("title")}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
           placeholder="e.g. Senior Frontend Developer"
         />
         {errors.title && <p className="mt-1 text-xs text-red-600">{errors.title.message}</p>}
@@ -80,7 +80,7 @@ export default function PostJobForm({
           id="description"
           {...register("description")}
           rows={6}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
           placeholder="Describe the role, responsibilities, and requirements…"
         />
         {errors.description && <p className="mt-1 text-xs text-red-600">{errors.description.message}</p>}
@@ -94,7 +94,7 @@ export default function PostJobForm({
           <select
             id="category"
             {...register("category")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
             <option value="">Select category…</option>
             {JOB_CATEGORIES.map((c) => (
@@ -111,7 +111,7 @@ export default function PostJobForm({
           <select
             id="experienceLevel"
             {...register("experienceLevel")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
             <option value="">Select level…</option>
             {EXPERIENCE_LEVELS.map((l) => (
@@ -144,7 +144,7 @@ export default function PostJobForm({
           <input
             id="location"
             {...register("location")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             placeholder="e.g. San Francisco, CA"
           />
           {errors.location && <p className="mt-1 text-xs text-red-600">{errors.location.message}</p>}
@@ -157,7 +157,7 @@ export default function PostJobForm({
           <select
             id="jobType"
             {...register("jobType")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
             <option value="">Select type…</option>
             {JOB_TYPES.map((t) => (
@@ -175,7 +175,7 @@ export default function PostJobForm({
             id="deadline"
             type="date"
             {...register("deadline", { valueAsDate: true })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
           {errors.deadline && <p className="mt-1 text-xs text-red-600">{errors.deadline.message}</p>}
         </div>
@@ -190,7 +190,7 @@ export default function PostJobForm({
             id="salaryMin"
             type="number"
             {...register("salaryMin")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             placeholder="e.g. 60000"
           />
         </div>
@@ -202,7 +202,7 @@ export default function PostJobForm({
             id="salaryMax"
             type="number"
             {...register("salaryMax")}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             placeholder="e.g. 100000"
           />
           {errors.salaryMax && <p className="mt-1 text-xs text-red-600">{errors.salaryMax.message}</p>}
@@ -212,7 +212,7 @@ export default function PostJobForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="px-6 py-2.5 bg-indigo-700 text-white text-sm font-semibold rounded-lg hover:bg-indigo-800 disabled:opacity-60 transition"
+        className="px-6 py-2.5 bg-teal-700 text-white text-sm font-semibold rounded-lg hover:bg-teal-800 disabled:opacity-60 transition"
       >
         {isSubmitting ? "Saving…" : submitLabel}
       </button>

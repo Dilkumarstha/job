@@ -45,12 +45,12 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
           name="search"
           defaultValue={params.search}
           placeholder="Search by email…"
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
         <select
           name="role"
           defaultValue={params.role}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         >
           <option value="ALL">All roles</option>
           <option value="JOBSEEKER">Job Seekers</option>
@@ -60,7 +60,7 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
         <select
           name="status"
           defaultValue={params.status}
-          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         >
           <option value="ALL">All statuses</option>
           <option value="ACTIVE">Active</option>
@@ -69,7 +69,7 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
         </select>
         <button
           type="submit"
-          className="px-4 py-2 bg-indigo-700 text-white text-sm font-medium rounded-lg hover:bg-indigo-800 transition"
+          className="px-4 py-2 bg-teal-700 text-white text-sm font-medium rounded-lg hover:bg-teal-800 transition"
         >
           Search
         </button>

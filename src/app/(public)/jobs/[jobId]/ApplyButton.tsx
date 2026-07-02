@@ -37,7 +37,7 @@ export default function ApplyButton({ jobId, jobTitle, companyName, initialStatu
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="w-full py-2.5 bg-indigo-700 text-white text-sm font-semibold rounded-xl hover:bg-indigo-800 transition"
+        className="w-full py-2.5 bg-teal-700 text-white text-sm font-semibold rounded-xl hover:bg-teal-800 transition"
       >
         Apply Now
       </button>

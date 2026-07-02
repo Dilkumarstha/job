@@ -44,7 +44,7 @@ export default async function SavedJobsPage() {
           action={
             <Link
               href="/seeker/feed"
-              className="px-4 py-2 bg-indigo-700 text-white text-sm font-medium rounded-lg hover:bg-indigo-800 transition"
+              className="px-4 py-2 bg-teal-700 text-white text-sm font-medium rounded-lg hover:bg-teal-800 transition"
             >
               Browse jobs
             </Link>

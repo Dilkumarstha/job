@@ -9,7 +9,7 @@ export default async function AdminDashboard() {
   }
 
   const cards = [
-    { label: "Job Seekers", value: stats.totalSeekers, icon: "👤", color: "indigo" },
+    { label: "Job Seekers", value: stats.totalSeekers, icon: "👤", color: "teal" },
     { label: "Active Companies", value: stats.totalCompaniesActive, icon: "🏢", color: "green" },
     { label: "Pending Companies", value: stats.totalCompaniesPending, icon: "⏳", color: "amber" },
     { label: "Active Jobs", value: stats.totalJobsActive, icon: "💼", color: "blue" },
@@ -19,7 +19,6 @@ export default async function AdminDashboard() {
   ];
 
   const colorMap: Record<string, string> = {
-    indigo: "border-indigo-200 bg-indigo-50",
     green: "border-green-200 bg-green-50",
     amber: "border-amber-200 bg-amber-50",
     blue: "border-blue-200 bg-blue-50",

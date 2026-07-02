@@ -87,7 +87,7 @@ function Field({
 }
 
 const inputCls =
-  "w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50/50 transition placeholder:text-gray-400";
+  "w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-gray-50/50 transition placeholder:text-gray-400";
 
 export default function SeekerProfileForm({ profile, userId }: SeekerProfileFormProps) {
   const [success, setSuccess] = useState(false);
@@ -269,8 +269,8 @@ export default function SeekerProfileForm({ profile, userId }: SeekerProfileForm
                     whileTap={{ scale: 0.96 }}
                     className={`flex items-center gap-2 p-2.5 rounded-xl border cursor-pointer text-xs font-medium transition select-none ${
                       checked
-                        ? "border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm"
-                        : "border-gray-200 text-gray-600 hover:border-indigo-300 hover:bg-indigo-50/40"
+                        ? "border-teal-500 bg-teal-50 text-teal-700 shadow-sm"
+                        : "border-gray-200 text-gray-600 hover:border-teal-300 hover:bg-teal-50/40"
                     }`}
                   >
                     <input
@@ -285,7 +285,7 @@ export default function SeekerProfileForm({ profile, userId }: SeekerProfileForm
                     />
                     <motion.span
                       animate={{ scale: checked ? 1 : 0.85, opacity: checked ? 1 : 0 }}
-                      className="w-3.5 h-3.5 rounded-full bg-indigo-600 flex items-center justify-center shrink-0"
+                      className="w-3.5 h-3.5 rounded-full bg-teal-600 flex items-center justify-center shrink-0"
                     >
                       <svg className="w-2 h-2 text-white" fill="none" viewBox="0 0 12 12">
                         <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
@@ -343,7 +343,7 @@ export default function SeekerProfileForm({ profile, userId }: SeekerProfileForm
             backgroundColor: dragOver ? "#eef2ff" : "#fafafa",
           }}
           transition={{ duration: 0.15 }}
-          className="border-2 border-dashed rounded-2xl p-8 flex flex-col items-center gap-3 cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/30 transition-colors"
+          className="border-2 border-dashed rounded-2xl p-8 flex flex-col items-center gap-3 cursor-pointer hover:border-teal-400 hover:bg-teal-50/30 transition-colors"
         >
           <AnimatePresence mode="wait">
             {uploading ? (
@@ -357,9 +357,9 @@ export default function SeekerProfileForm({ profile, userId }: SeekerProfileForm
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                  className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full"
+                  className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full"
                 />
-                <p className="text-sm text-indigo-600 font-medium">Uploading resume…</p>
+                <p className="text-sm text-teal-600 font-medium">Uploading resume…</p>
               </motion.div>
             ) : (
               <motion.div
@@ -373,7 +373,7 @@ export default function SeekerProfileForm({ profile, userId }: SeekerProfileForm
                 <p className="text-sm font-medium text-gray-700">
                   {dragOver ? "Drop it here!" : "Drag & drop your PDF here"}
                 </p>
-                <p className="text-xs text-gray-400">or <span className="text-indigo-600 font-medium">click to browse</span> — PDF only, max 5 MB</p>
+                <p className="text-xs text-gray-400">or <span className="text-teal-600 font-medium">click to browse</span> — PDF only, max 5 MB</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -399,7 +399,7 @@ export default function SeekerProfileForm({ profile, userId }: SeekerProfileForm
           disabled={isSubmitting || uploading}
           whileTap={{ scale: 0.97 }}
           whileHover={{ scale: 1.02 }}
-          className="px-8 py-3 bg-indigo-700 text-white text-sm font-semibold rounded-xl hover:bg-indigo-800 disabled:opacity-60 disabled:cursor-not-allowed transition shadow-sm"
+          className="px-8 py-3 bg-teal-700 text-white text-sm font-semibold rounded-xl hover:bg-teal-800 disabled:opacity-60 disabled:cursor-not-allowed transition shadow-sm"
         >
           {isSubmitting ? (
             <span className="flex items-center gap-2">

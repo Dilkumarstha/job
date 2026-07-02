@@ -33,7 +33,7 @@ export default async function AdminCompaniesPage() {
                       <p className="text-sm text-gray-500">{company.email}</p>
                       {profile?.industry && <p className="text-sm text-gray-500">Industry: {profile.industry}</p>}
                       {profile?.website && (
-                        <a href={profile.website} target="_blank" rel="noreferrer" className="text-sm text-indigo-600 hover:underline">{profile.website}</a>
+                        <a href={profile.website} target="_blank" rel="noreferrer" className="text-sm text-teal-600 hover:underline">{profile.website}</a>
                       )}
                       {profile?.description && <p className="text-sm text-gray-600 mt-2 max-w-lg line-clamp-2">{profile.description}</p>}
                       <p className="text-xs text-gray-400 mt-1">Registered {new Date(company.createdAt).toLocaleDateString()}</p>

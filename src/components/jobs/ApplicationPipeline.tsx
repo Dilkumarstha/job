@@ -64,9 +64,9 @@ export default function ApplicationPipeline({ status }: Props) {
                                     className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all ${isRejectedFinal
                                             ? "bg-red-500 border-red-500 text-white"
                                             : isDone
-                                                ? "bg-indigo-600 border-indigo-600 text-white"
+                                                ? "bg-teal-600 border-teal-600 text-white"
                                                 : isActive
-                                                    ? "bg-white border-indigo-600 text-indigo-600 ring-4 ring-indigo-100"
+                                                    ? "bg-white border-teal-600 text-teal-600 ring-4 ring-teal-100"
                                                     : "bg-white border-gray-200 text-gray-300"
                                         }`}
                                 >
@@ -77,7 +77,7 @@ export default function ApplicationPipeline({ status }: Props) {
                                     className={`text-xs font-medium mt-1.5 text-center w-16 leading-tight ${isRejectedFinal
                                             ? "text-red-600"
                                             : isActive
-                                                ? "text-indigo-700"
+                                                ? "text-teal-700"
                                                 : isDone
                                                     ? "text-gray-700"
                                                     : "text-gray-300"
@@ -92,7 +92,7 @@ export default function ApplicationPipeline({ status }: Props) {
                                 <div className="flex-1 h-0.5 mt-4 mx-1">
                                     <div
                                         className={`h-full rounded-full transition-all duration-500 ${i < currentIndex && !isRejected
-                                                ? "bg-indigo-600"
+                                                ? "bg-teal-600"
                                                 : "bg-gray-200"
                                             }`}
                                     />

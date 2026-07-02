@@ -91,7 +91,7 @@ export default async function CompanyProfilePage({ params }: CompanyProfilePageP
         <main className="min-h-screen bg-gray-50 flex flex-col justify-between">
             <div>
                 {/* Dynamic header design / banner */}
-                <div className="h-44 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 w-full shadow-inner relative flex items-end">
+                <div className="h-44 bg-gradient-to-r from-teal-600 to-teal-700 w-full shadow-inner relative flex items-end">
                     <div className="max-w-7xl mx-auto px-6 w-full flex justify-between pb-4">
                         <Link
                             href="/"
@@ -107,7 +107,7 @@ export default async function CompanyProfilePage({ params }: CompanyProfilePageP
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-gray-100">
                             <div className="flex items-center gap-5">
-                                <div className="w-20 h-20 bg-indigo-50 border border-indigo-100 rounded-2xl flex items-center justify-center text-4xl shadow-sm font-bold text-indigo-700 shrink-0 select-none">
+                                <div className="w-20 h-20 bg-teal-50 border border-teal-100 rounded-2xl flex items-center justify-center text-4xl shadow-sm font-bold text-teal-700 shrink-0 select-none">
                                     {profile.companyName.charAt(0).toUpperCase()}
                                 </div>
                                 <div>
@@ -116,7 +116,7 @@ export default async function CompanyProfilePage({ params }: CompanyProfilePageP
                                     </h1>
                                     <div className="flex flex-wrap items-center gap-2 mt-1.5">
                                         {profile.industry ? (
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700">
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-50 text-teal-700">
                                                 {profile.industry}
                                             </span>
                                         ) : (
@@ -153,7 +153,7 @@ export default async function CompanyProfilePage({ params }: CompanyProfilePageP
                                 )}
                                 <a
                                     href={`mailto:${companyUser.email}`}
-                                    className="px-4 py-2 bg-indigo-700 hover:bg-indigo-800 rounded-xl text-sm font-semibold text-white transition flex items-center gap-1.5"
+                                    className="px-4 py-2 bg-teal-700 hover:bg-teal-800 rounded-xl text-sm font-semibold text-white transition flex items-center gap-1.5"
                                 >
                                     ✉ Contact Us
                                 </a>

@@ -92,7 +92,7 @@ export default function ProfileShell({
           initial={{ opacity: 0, scaleX: 0.85 }}
           animate={{ opacity: 1, scaleX: 1 }}
           transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-          className="h-36 rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 shadow-lg origin-left"
+          className="h-36 rounded-2xl bg-gradient-to-r from-teal-600 via-teal-500 to-teal-700 shadow-lg origin-left"
         />
         <motion.div
           initial={{ opacity: 0, scale: 0.6, y: 10 }}
@@ -100,7 +100,7 @@ export default function ProfileShell({
           transition={{ type: "spring", stiffness: 300, damping: 22, delay: 0.2 }}
           className="absolute -bottom-10 left-6"
         >
-          <div className="w-20 h-20 rounded-2xl bg-white border-4 border-white shadow-lg flex items-center justify-center text-2xl font-black text-indigo-700 select-none">
+          <div className="w-20 h-20 rounded-2xl bg-white border-4 border-white shadow-lg flex items-center justify-center text-2xl font-black text-teal-700 select-none">
             {initials}
           </div>
         </motion.div>
@@ -122,7 +122,7 @@ export default function ProfileShell({
               <span className="flex items-center gap-1">📍 {location}</span>
             )}
             {experienceLevel && (
-              <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-medium">
+              <span className="px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 text-xs font-medium">
                 {experienceLevel.charAt(0) + experienceLevel.slice(1).toLowerCase()}
               </span>
             )}
@@ -135,7 +135,7 @@ export default function ProfileShell({
             rel="noreferrer"
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-700 hover:bg-indigo-800 text-white text-sm font-semibold rounded-xl transition shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-sm font-semibold rounded-xl transition shadow-sm"
           >
             📄 View Resume
           </motion.a>
@@ -153,12 +153,12 @@ export default function ProfileShell({
             <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Your Stats</h2>
             <div className="space-y-3">
               <Link href="/seeker/applications" className="flex items-center justify-between group">
-                <span className="text-sm text-gray-600 group-hover:text-indigo-700 transition">Applications</span>
+                <span className="text-sm text-gray-600 group-hover:text-teal-700 transition">Applications</span>
                 <AnimatedCount value={totalApplications} />
               </Link>
               <div className="h-px bg-gray-50" />
               <Link href="/seeker/saved" className="flex items-center justify-between group">
-                <span className="text-sm text-gray-600 group-hover:text-indigo-700 transition">Saved Jobs</span>
+                <span className="text-sm text-gray-600 group-hover:text-teal-700 transition">Saved Jobs</span>
                 <AnimatedCount value={savedCount} />
               </Link>
               <div className="h-px bg-gray-50" />
@@ -231,7 +231,7 @@ export default function ProfileShell({
                       hidden: { opacity: 0, scale: 0.7 },
                       visible: { opacity: 1, scale: 1, transition: { duration: 0.25 } },
                     }}
-                    className="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-xs rounded-full border border-indigo-100"
+                    className="px-2.5 py-1 bg-teal-50 text-teal-700 text-xs rounded-full border border-teal-100"
                   >
                     {s}
                   </motion.span>

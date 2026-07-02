@@ -30,7 +30,7 @@ export default async function ApplicantsPage({ params }: ApplicantsPageProps) {
   return (
     <div>
       <div className="mb-6">
-        <Link href="/company/jobs" className="text-sm text-indigo-600 hover:underline">
+        <Link href="/company/jobs" className="text-sm text-teal-600 hover:underline">
           ← Back to jobs
         </Link>
         <h1 className="text-2xl font-bold text-gray-900 mt-2">{job.title}</h1>
@@ -72,11 +72,11 @@ export default async function ApplicantsPage({ params }: ApplicantsPageProps) {
                       <div className="flex items-center gap-2">
                         <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-indigo-500 rounded-full"
+                            className="h-full bg-teal-500 rounded-full"
                             style={{ width: `${Math.round(app.score * 100)}%` }}
                           />
                         </div>
-                        <span className="text-xs text-indigo-700 font-medium">
+                        <span className="text-xs text-teal-700 font-medium">
                           {Math.round(app.score * 100)}%
                         </span>
                       </div>
@@ -116,7 +116,7 @@ export default async function ApplicantsPage({ params }: ApplicantsPageProps) {
                           href={app.resumeUrl || profile?.resumeUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg hover:bg-indigo-100 transition"
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-lg hover:bg-teal-100 transition"
                         >
                           📄 View Application Resume
                         </a>
@@ -145,7 +145,7 @@ export default async function ApplicantsPage({ params }: ApplicantsPageProps) {
                 {/* Review form */}
                 {(app.status === "PENDING" || app.status === "REVIEWED") && (
                   <details className="mt-4">
-                    <summary className="text-sm text-indigo-600 cursor-pointer hover:underline">
+                    <summary className="text-sm text-teal-600 cursor-pointer hover:underline">
                       Review applicant
                     </summary>
                     <form
@@ -164,7 +164,7 @@ export default async function ApplicantsPage({ params }: ApplicantsPageProps) {
                           required
                           minLength={10}
                           rows={2}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
                           placeholder="Explain your decision…"
                         />
                       </div>

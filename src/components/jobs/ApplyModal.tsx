@@ -91,17 +91,17 @@ export default function ApplyModal({
                 className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
             >
                 {/* Header */}
-                <div className="bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-5">
+                <div className="bg-gradient-to-r from-teal-600 to-teal-500 px-6 py-5">
                     <div className="flex items-start justify-between">
                         <div>
                             <h2 className="text-lg font-bold text-white">Apply for Position</h2>
-                            <p className="text-indigo-100 text-sm mt-0.5 truncate">
+                            <p className="text-teal-100 text-sm mt-0.5 truncate">
                                 {jobTitle}{companyName ? ` · ${companyName}` : ""}
                             </p>
                         </div>
                         <button
                             onClick={onClose}
-                            className="text-indigo-200 hover:text-white transition mt-0.5"
+                            className="text-teal-200 hover:text-white transition mt-0.5"
                             aria-label="Close"
                         >
                             ✕
@@ -114,20 +114,20 @@ export default function ApplyModal({
                             <div key={s} className="flex items-center gap-2">
                                 <div
                                     className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all ${step === s
-                                            ? "bg-white text-indigo-600"
+                                            ? "bg-white text-teal-600"
                                             : step > s
-                                                ? "bg-indigo-400 text-white"
-                                                : "bg-indigo-400/50 text-indigo-200"
+                                                ? "bg-teal-400 text-white"
+                                                : "bg-teal-400/50 text-teal-200"
                                         }`}
                                 >
                                     {step > s ? "✓" : s}
                                 </div>
                                 <span
-                                    className={`text-xs ${step === s ? "text-white font-medium" : "text-indigo-200"}`}
+                                    className={`text-xs ${step === s ? "text-white font-medium" : "text-teal-200"}`}
                                 >
                                     {s === 1 ? "Your Info" : "Cover Letter"}
                                 </span>
-                                {s < 2 && <div className="w-8 h-px bg-indigo-400/50" />}
+                                {s < 2 && <div className="w-8 h-px bg-teal-400/50" />}
                             </div>
                         ))}
                     </div>
@@ -159,7 +159,7 @@ export default function ApplyModal({
                                         value={phone}
                                         onChange={(e) => setPhone(e.target.value)}
                                         placeholder="+1 (555) 000-0000"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
                                     />
                                 </div>
 
@@ -170,14 +170,14 @@ export default function ApplyModal({
                                     </label>
                                     <div
                                         onClick={() => fileRef.current?.click()}
-                                        className="border-2 border-dashed border-gray-200 rounded-lg px-4 py-6 flex flex-col items-center gap-2 cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/40 transition"
+                                        className="border-2 border-dashed border-gray-200 rounded-lg px-4 py-6 flex flex-col items-center gap-2 cursor-pointer hover:border-teal-400 hover:bg-teal-50/40 transition"
                                     >
                                         <span className="text-2xl">📄</span>
                                         <span className="text-sm text-gray-500">
                                             {resumeFile ? (
-                                                <span className="text-indigo-600 font-medium">{resumeFile.name}</span>
+                                                <span className="text-teal-600 font-medium">{resumeFile.name}</span>
                                             ) : (
-                                                <>Click to upload <span className="text-indigo-600 font-medium">resume</span></>
+                                                <>Click to upload <span className="text-teal-600 font-medium">resume</span></>
                                             )}
                                         </span>
                                         <input
@@ -193,7 +193,7 @@ export default function ApplyModal({
                                 <motion.button
                                     onClick={() => setStep(2)}
                                     whileTap={{ scale: 0.97 }}
-                                    className="w-full py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 transition"
+                                    className="w-full py-2.5 bg-teal-600 text-white text-sm font-semibold rounded-xl hover:bg-teal-700 transition"
                                 >
                                     Next →
                                 </motion.button>
@@ -222,7 +222,7 @@ export default function ApplyModal({
                                         onChange={(e) => setCoverLetter(e.target.value)}
                                         rows={7}
                                         placeholder={`Dear Hiring Manager,\n\nI am excited to apply for the ${jobTitle} role...`}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
                                     />
                                     <p className="text-xs text-gray-400 mt-1 text-right">
                                         {coverLetter.length} / 2000 characters
@@ -255,7 +255,7 @@ export default function ApplyModal({
                                         onClick={handleSubmit}
                                         disabled={submitting || !coverLetter.trim()}
                                         whileTap={{ scale: 0.97 }}
-                                        className="flex-1 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition"
+                                        className="flex-1 py-2.5 bg-teal-600 text-white text-sm font-semibold rounded-xl hover:bg-teal-700 disabled:opacity-60 disabled:cursor-not-allowed transition"
                                     >
                                         {uploading ? "Uploading…" : submitting ? "Submitting…" : "Submit Application"}
                                     </motion.button>

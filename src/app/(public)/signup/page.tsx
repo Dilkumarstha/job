@@ -87,7 +87,7 @@ export default function SignupPage() {
       >
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
           <div className="mb-8">
-            <Link href="/" className="text-xl font-bold text-indigo-700">
+            <Link href="/" className="text-xl font-bold text-teal-700">
               HireHub
             </Link>
             <h1 className="mt-4 text-2xl font-bold text-gray-900">
@@ -95,7 +95,7 @@ export default function SignupPage() {
             </h1>
             <p className="text-sm text-gray-500 mt-1">
               Already have an account?{" "}
-              <Link href="/login" className="text-indigo-700 font-medium hover:underline">
+              <Link href="/login" className="text-teal-700 font-medium hover:underline">
                 Sign in
               </Link>
             </p>
@@ -122,7 +122,7 @@ export default function SignupPage() {
                   {active && (
                     <motion.div
                       layoutId="role-bg"
-                      className="absolute inset-0 bg-indigo-700 rounded-lg"
+                      className="absolute inset-0 bg-teal-700 rounded-lg"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -184,7 +184,7 @@ export default function SignupPage() {
               setRole(isSeeker ? "company" : "seeker");
               setServerError("");
             }}
-            className="text-indigo-700 font-medium hover:underline"
+            className="text-teal-700 font-medium hover:underline"
           >
             {isSeeker ? "Register your company" : "Sign up as Job Seeker"}
           </button>
@@ -219,7 +219,7 @@ function SeekerFields({
             <input
               id="fullName"
               {...register("fullName")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="Jane Doe"
             />
             {errors.fullName && <p className="mt-1 text-xs text-red-600">{errors.fullName.message}</p>}
@@ -234,7 +234,7 @@ function SeekerFields({
               id="email"
               type="email"
               {...register("email")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="jane@example.com"
             />
             {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
@@ -249,7 +249,7 @@ function SeekerFields({
               id="password"
               type="password"
               {...register("password")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="Min. 8 characters, 1 uppercase, 1 number"
             />
             {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>}
@@ -264,7 +264,7 @@ function SeekerFields({
               id="confirmPassword"
               type="password"
               {...register("confirmPassword")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="Re-enter your password"
             />
             {errors.confirmPassword && <p className="mt-1 text-xs text-red-600">{errors.confirmPassword.message}</p>}
@@ -275,7 +275,7 @@ function SeekerFields({
             type="submit"
             disabled={isLoading}
             whileTap={{ scale: 0.97 }}
-            className="w-full py-2.5 bg-indigo-700 text-white text-sm font-semibold rounded-lg hover:bg-indigo-800 disabled:opacity-60 transition mt-2"
+            className="w-full py-2.5 bg-teal-700 text-white text-sm font-semibold rounded-lg hover:bg-teal-800 disabled:opacity-60 transition mt-2"
           >
             {isLoading ? "Creating account…" : "Create account"}
           </motion.button>
@@ -313,7 +313,7 @@ function CompanyFields({
             <input
               id="companyName"
               {...register("companyName")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="Acme Corp"
             />
             {errors.companyName && <p className="mt-1 text-xs text-red-600">{errors.companyName.message}</p>}
@@ -328,7 +328,7 @@ function CompanyFields({
               id="email"
               type="email"
               {...register("email")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="hr@company.com"
             />
             {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
@@ -342,7 +342,7 @@ function CompanyFields({
             <input
               id="industry"
               {...register("industry")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="e.g. Technology"
             />
           </div>
@@ -356,7 +356,7 @@ function CompanyFields({
               id="website"
               type="url"
               {...register("website")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="https://company.com"
             />
             {errors.website && <p className="mt-1 text-xs text-red-600">{errors.website.message}</p>}
@@ -371,7 +371,7 @@ function CompanyFields({
               id="password"
               type="password"
               {...register("password")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="Min. 8 characters, 1 uppercase, 1 number"
             />
             {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>}
@@ -386,7 +386,7 @@ function CompanyFields({
               id="confirmPassword"
               type="password"
               {...register("confirmPassword")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="Re-enter your password"
             />
             {errors.confirmPassword && <p className="mt-1 text-xs text-red-600">{errors.confirmPassword.message}</p>}
@@ -397,7 +397,7 @@ function CompanyFields({
             type="submit"
             disabled={isLoading}
             whileTap={{ scale: 0.97 }}
-            className="w-full py-2.5 bg-indigo-700 text-white text-sm font-semibold rounded-lg hover:bg-indigo-800 disabled:opacity-60 transition mt-2"
+            className="w-full py-2.5 bg-teal-700 text-white text-sm font-semibold rounded-lg hover:bg-teal-800 disabled:opacity-60 transition mt-2"
           >
             {isLoading ? "Submitting…" : "Register company"}
           </motion.button>

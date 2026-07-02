@@ -60,7 +60,7 @@ export default async function CompanyDashboard() {
         {session.user.status === "ACTIVE" && (
           <Link
             href="/company/jobs/new"
-            className="px-4 py-2 bg-indigo-700 text-white text-sm font-semibold rounded-lg hover:bg-indigo-800 transition"
+            className="px-4 py-2 bg-teal-700 text-white text-sm font-semibold rounded-lg hover:bg-teal-800 transition"
           >
             + Post Job
           </Link>
@@ -84,7 +84,7 @@ export default async function CompanyDashboard() {
       <AnimatedSection delay={0.15} className="bg-white rounded-xl border border-gray-100 p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-semibold text-gray-900">Recent Applications</h2>
-          <Link href="/company/jobs" className="text-sm text-indigo-600 hover:underline">
+          <Link href="/company/jobs" className="text-sm text-teal-600 hover:underline">
             View all jobs →
           </Link>
         </div>

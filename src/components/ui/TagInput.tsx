@@ -38,17 +38,17 @@ export default function TagInput({
   };
 
   return (
-    <div className="flex flex-wrap gap-2 p-2 border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent min-h-[42px]">
+    <div className="flex flex-wrap gap-2 p-2 border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-teal-500 focus-within:border-transparent min-h-[42px]">
       {value.map((tag) => (
         <span
           key={tag}
-          className="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-100 text-indigo-800 text-sm rounded-full"
+          className="inline-flex items-center gap-1 px-2 py-0.5 bg-teal-100 text-teal-800 text-sm rounded-full"
         >
           {tag}
           <button
             type="button"
             onClick={() => removeTag(tag)}
-            className="text-indigo-500 hover:text-indigo-800 leading-none"
+            className="text-teal-500 hover:text-teal-800 leading-none"
             aria-label={`Remove ${tag}`}
           >
             ×

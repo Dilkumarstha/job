@@ -48,7 +48,7 @@ export default function SearchFilters({
         {hasFilters && (
           <button
             onClick={clearAll}
-            className="text-xs text-indigo-600 hover:underline"
+            className="text-xs text-teal-600 hover:underline"
           >
             Clear all
           </button>
@@ -69,7 +69,7 @@ export default function SearchFilters({
               updateParam("q", (e.target as HTMLInputElement).value);
           }}
           placeholder="Job title, skill…"
-          className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
       </div>
 
@@ -87,7 +87,7 @@ export default function SearchFilters({
               updateParam("location", (e.target as HTMLInputElement).value);
           }}
           placeholder="City, country…"
-          className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         />
       </div>
 
@@ -99,7 +99,7 @@ export default function SearchFilters({
         <select
           value={current.category ?? ""}
           onChange={(e) => updateParam("category", e.target.value)}
-          className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         >
           <option value="">All categories</option>
           {categories.map((c) => (
@@ -118,7 +118,7 @@ export default function SearchFilters({
         <select
           value={current.experienceLevel ?? ""}
           onChange={(e) => updateParam("experienceLevel", e.target.value)}
-          className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
         >
           <option value="">Any level</option>
           {experienceLevels.map((l) => (
@@ -140,14 +140,14 @@ export default function SearchFilters({
             defaultValue={current.salaryMin}
             onBlur={(e) => updateParam("salaryMin", e.target.value)}
             placeholder="Min"
-            className="w-1/2 px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-1/2 px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
           <input
             type="number"
             defaultValue={current.salaryMax}
             onBlur={(e) => updateParam("salaryMax", e.target.value)}
             placeholder="Max"
-            className="w-1/2 px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-1/2 px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
         </div>
       </div>

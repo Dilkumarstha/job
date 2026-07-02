@@ -86,7 +86,7 @@ export default function OnboardingPage() {
                       <label
                         className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer text-sm transition w-full ${
                           field.value.includes(cat)
-                            ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+                            ? "border-teal-500 bg-teal-50 text-teal-700"
                             : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
@@ -144,7 +144,7 @@ export default function OnboardingPage() {
             <select
               id="experienceLevel"
               {...register("experienceLevel")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             >
               <option value="">Select level…</option>
               {EXPERIENCE_LEVELS.map((l) => (
@@ -166,7 +166,7 @@ export default function OnboardingPage() {
             <input
               id="location"
               {...register("location")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="e.g. San Francisco, CA"
             />
             {errors.location && (
@@ -178,7 +178,7 @@ export default function OnboardingPage() {
             type="submit"
             disabled={isLoading}
             whileTap={{ scale: 0.97 }}
-            className="w-full py-2.5 bg-indigo-700 text-white font-semibold rounded-lg hover:bg-indigo-800 disabled:opacity-60 transition"
+            className="w-full py-2.5 bg-teal-700 text-white font-semibold rounded-lg hover:bg-teal-800 disabled:opacity-60 transition"
           >
             {isLoading ? "Saving…" : "Get started →"}
           </motion.button>

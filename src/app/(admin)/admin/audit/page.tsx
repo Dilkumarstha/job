@@ -46,7 +46,7 @@ export default async function AuditPage({ searchParams }: AuditPageProps) {
                   return (
                     <tr key={log._id.toString()} className="hover:bg-gray-50">
                       <td className="px-4 py-3">
-                        <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">
+                        <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-700">
                           {log.action}
                         </span>
                       </td>

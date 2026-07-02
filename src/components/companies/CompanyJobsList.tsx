@@ -126,7 +126,7 @@ export default function CompanyJobsList({
                         {hasFilters && (
                             <button
                                 onClick={clearAll}
-                                className="text-xs text-indigo-600 hover:underline font-semibold"
+                                className="text-xs text-teal-600 hover:underline font-semibold"
                             >
                                 Clear all
                             </button>
@@ -141,7 +141,7 @@ export default function CompanyJobsList({
                             value={q}
                             onChange={(e) => setQ(e.target.value)}
                             placeholder="Job title, skill…"
-                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
                         />
                     </div>
 
@@ -153,7 +153,7 @@ export default function CompanyJobsList({
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
                             placeholder="City, country…"
-                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
                         />
                     </div>
 
@@ -163,7 +163,7 @@ export default function CompanyJobsList({
                         <select
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
-                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
                         >
                             <option value="">All categories</option>
                             {JOB_CATEGORIES.map((c) => (
@@ -182,7 +182,7 @@ export default function CompanyJobsList({
                         <select
                             value={experienceLevel}
                             onChange={(e) => setExperienceLevel(e.target.value)}
-                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
                         >
                             <option value="">Any level</option>
                             {EXPERIENCE_LEVELS.map((l) => (
@@ -199,7 +199,7 @@ export default function CompanyJobsList({
                         <select
                             value={jobTypeFilter}
                             onChange={(e) => setJobTypeFilter(e.target.value)}
-                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                            className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
                         >
                             <option value="ALL">All types</option>
                             {JOB_TYPES.map((t) => (
@@ -218,7 +218,7 @@ export default function CompanyJobsList({
                                 <select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value as "latest" | "best_match")}
-                                    className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                                    className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
                                 >
                                     <option value="best_match">Best Fit Matches</option>
                                     <option value="latest">Latest Jobs</option>
@@ -231,7 +231,7 @@ export default function CompanyJobsList({
                                     id="bestMatchesOnly"
                                     checked={bestMatchesOnly}
                                     onChange={(e) => setBestMatchesOnly(e.target.checked)}
-                                    className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 cursor-pointer"
+                                    className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 cursor-pointer"
                                 />
                                 <label
                                     htmlFor="bestMatchesOnly"

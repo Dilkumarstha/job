@@ -97,13 +97,13 @@ export default function RelatedJobsSection({
             onClick={() => handleTabChange("similar")}
             className={`px-4 py-1.5 text-sm font-medium rounded-md transition ${
               tab === "similar"
-                ? "bg-white text-indigo-700 shadow-sm"
+                ? "bg-white text-teal-700 shadow-sm"
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
             Similar Jobs
             {similarJobs.length > 0 && (
-              <span className="ml-1.5 px-1.5 py-0.5 bg-indigo-100 text-indigo-600 text-xs rounded-full">
+              <span className="ml-1.5 px-1.5 py-0.5 bg-teal-100 text-teal-600 text-xs rounded-full">
                 {similarJobs.length}
               </span>
             )}
@@ -112,13 +112,13 @@ export default function RelatedJobsSection({
             onClick={() => handleTabChange("company")}
             className={`px-4 py-1.5 text-sm font-medium rounded-md transition ${
               tab === "company"
-                ? "bg-white text-indigo-700 shadow-sm"
+                ? "bg-white text-teal-700 shadow-sm"
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
             From Same Company
             {sameCompanyJobs.length > 0 && (
-              <span className="ml-1.5 px-1.5 py-0.5 bg-indigo-100 text-indigo-600 text-xs rounded-full">
+              <span className="ml-1.5 px-1.5 py-0.5 bg-teal-100 text-teal-600 text-xs rounded-full">
                 {sameCompanyJobs.length}
               </span>
             )}

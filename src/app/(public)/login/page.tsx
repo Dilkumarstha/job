@@ -69,7 +69,7 @@ function LoginForm() {
         <div className="mb-8">
           {/* Logo */}
           <FadeIn delay={0}>
-            <Link href="/" className="text-xl font-bold text-indigo-700">
+            <Link href="/" className="text-xl font-bold text-teal-700">
               HireHub
             </Link>
           </FadeIn>
@@ -152,7 +152,7 @@ function LoginForm() {
               type="email"
               autoComplete="email"
               {...register("email")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
               placeholder="you@example.com"
             />
             {errors.email && (
@@ -172,7 +172,7 @@ function LoginForm() {
               type="password"
               autoComplete="current-password"
               {...register("password")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
               placeholder="••••••••"
             />
             {errors.password && (
@@ -187,7 +187,7 @@ function LoginForm() {
             type="submit"
             disabled={isLoading}
             whileTap={{ scale: 0.97 }}
-            className="w-full py-2.5 bg-indigo-700 text-white text-sm font-semibold rounded-lg hover:bg-indigo-800 disabled:opacity-60 disabled:cursor-not-allowed transition"
+            className="w-full py-2.5 bg-teal-700 text-white text-sm font-semibold rounded-lg hover:bg-teal-800 disabled:opacity-60 disabled:cursor-not-allowed transition"
           >
             {isLoading ? "Signing in…" : "Sign in"}
           </motion.button>
@@ -195,7 +195,7 @@ function LoginForm() {
 
         <p className="mt-6 text-center text-sm text-gray-500">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-indigo-700 font-medium hover:underline">
+          <Link href="/signup" className="text-teal-700 font-medium hover:underline">
             Create one
           </Link>
         </p>
