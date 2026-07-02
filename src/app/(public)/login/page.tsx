@@ -4,14 +4,13 @@ import { useState, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { loginSchema, type LoginInput } from "@/lib/validations/auth";
 import { motion, AnimatePresence } from "@/components/ui/Motion";
 import { FadeIn, FadeUp } from "@/components/ui/Motion";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [serverError, setServerError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -48,10 +47,14 @@ function LoginForm() {
     const session = await sessionRes.json();
     const role = session?.user?.role;
 
-    if (role === "SUPERADMIN") router.push("/admin/dashboard");
-    else if (role === "COMPANY") router.push("/company/dashboard");
-    else if (role === "JOBSEEKER") router.push("/seeker/feed");
-    else router.push("/");
+    // Use location.href for a full page load so the layout (NavbarServer)
+    // re-renders on the server with the fresh session cookie.
+    const target =
+      role === "SUPERADMIN" ? "/admin/dashboard" :
+      role === "COMPANY" ? "/company/dashboard" :
+      role === "JOBSEEKER" ? "/seeker/feed" :
+      "/";
+    window.location.href = target;
   };
 
   return (
