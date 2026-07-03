@@ -34,7 +34,6 @@ export default async function CompanyJobsPage() {
 
       {jobs.length === 0 ? (
         <EmptyState
-          icon="💼"
           heading="No jobs posted yet"
           subtext="Post your first job to start receiving applications."
           action={

@@ -15,7 +15,8 @@ import User from "@/models/User";
 
 async function requireCompany() {
   const session = await auth();
-  if (!session || session.user.role !== "COMPANY") throw new Error("Unauthorized");
+  if (!session || session.user.role !== "COMPANY")
+    throw new Error("Unauthorized");
   if (session.user.status !== "ACTIVE") throw new Error("Company not approved");
   return session;
 }
@@ -43,21 +44,23 @@ export async function createJob(formData: FormData) {
 
   await connectDB();
 
-  const job = await Job.create({
+  await Job.create({
     ...result.data,
     companyId: session.user.id,
     status: "ACTIVE",
   });
 
   // Notify followers about the new job
-  const follows = await CompanyFollow.find({ companyId: session.user.id }).lean();
+  const follows = await CompanyFollow.find({
+    companyId: session.user.id,
+  }).lean();
   const followerIds = follows.map((f) => f.seekerId);
 
   if (followerIds.length > 0) {
     await createBulkNotifications(
       followerIds,
       "NEW_JOB_POSTED",
-      `A company you follow just posted a new job: "${result.data.title}"`
+      `A company you follow just posted a new job: "${result.data.title}"`,
     );
   }
 
@@ -122,7 +125,10 @@ export async function getJobApplicants(jobId: string) {
   const session = await requireCompany();
   await connectDB();
 
-  const job = await Job.findOne({ _id: jobId, companyId: session.user.id }).lean();
+  const job = await Job.findOne({
+    _id: jobId,
+    companyId: session.user.id,
+  }).lean();
   if (!job) return { error: "Job not found or access denied" };
 
   const applications = await Application.find({ jobId })
@@ -132,7 +138,9 @@ export async function getJobApplicants(jobId: string) {
 
   const seekerIds = applications.map((a) => a.seekerId);
 
-  const profiles = await SeekerProfile.find({ userId: { $in: seekerIds } }).lean();
+  const profiles = await SeekerProfile.find({
+    userId: { $in: seekerIds },
+  }).lean();
   const profileMap = new Map(profiles.map((p) => [p.userId.toString(), p]));
 
   // Compute match scores for each applicant
@@ -152,15 +160,15 @@ export async function getJobApplicants(jobId: string) {
 
     const score = profile
       ? matchScore(
-        {
-          skills: profile.skills,
-          interests: profile.interests,
-          experienceLevel: profile.experienceLevel,
-          location: profile.location,
-        },
-        jobInput,
-        new Set()
-      )
+          {
+            skills: profile.skills,
+            interests: profile.interests,
+            experienceLevel: profile.experienceLevel,
+            location: profile.location,
+          },
+          jobInput,
+          new Set(),
+        )
       : 0;
 
     return { ...app, profile, score };
@@ -189,7 +197,9 @@ export async function getActiveJobs(filters?: {
     role: "COMPANY",
     status: "ACTIVE",
     deletedAt: null,
-  }).select("_id").lean();
+  })
+    .select("_id")
+    .lean();
   const activeCompanyIds = activeCompanies.map((c) => c._id);
 
   const now = new Date();
@@ -205,7 +215,8 @@ export async function getActiveJobs(filters?: {
       { description: { $regex: filters.q, $options: "i" } },
     ];
   }
-  if (filters?.location) query.location = { $regex: filters.location, $options: "i" };
+  if (filters?.location)
+    query.location = { $regex: filters.location, $options: "i" };
   if (filters?.category) query.category = filters.category;
   if (filters?.experienceLevel) query.experienceLevel = filters.experienceLevel;
   if (filters?.jobType) query.jobType = filters.jobType;
@@ -213,14 +224,9 @@ export async function getActiveJobs(filters?: {
   if (filters?.salaryMax) query.salaryMax = { $lte: filters.salaryMax };
 
   const sortOrder: Record<string, 1 | -1> =
-    filters?.sortBy === "deadline"
-      ? { deadline: 1 }
-      : { createdAt: -1 };
+    filters?.sortBy === "deadline" ? { deadline: 1 } : { createdAt: -1 };
 
-  const jobs = await Job.find(query)
-    .sort(sortOrder)
-    .limit(100)
-    .lean();
+  const jobs = await Job.find(query).sort(sortOrder).limit(100).lean();
 
-  return jobs;
+  return jobs.map((job) => JSON.parse(JSON.stringify(job)));
 }

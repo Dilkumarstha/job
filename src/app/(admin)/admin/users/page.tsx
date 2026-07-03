@@ -78,7 +78,7 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
       <p className="text-sm text-gray-500 mb-4">{total} user{total !== 1 ? "s" : ""}</p>
 
       {users.length === 0 ? (
-        <EmptyState icon="👥" heading="No users found" subtext="Try adjusting your search filters." />
+        <EmptyState heading="No users found" subtext="Try adjusting your search filters." />
       ) : (
         <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
           <div className="overflow-x-auto">

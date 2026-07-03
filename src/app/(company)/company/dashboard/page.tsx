@@ -44,8 +44,8 @@ export default async function CompanyDashboard() {
     ]);
 
   const stats = [
-    { label: "Active Jobs", value: activeJobs, icon: "💼" },
-    { label: "Total Applicants", value: totalApplicants, icon: "👥" },
+    { label: "Active Jobs", value: activeJobs },
+    { label: "Total Applicants", value: totalApplicants },
   ];
 
   return (
@@ -72,7 +72,6 @@ export default async function CompanyDashboard() {
         {stats.map((s) => (
           <AnimatedGridItem key={s.label}>
             <div className="bg-white rounded-xl border border-gray-100 p-5 h-full">
-              <div className="text-2xl mb-1">{s.icon}</div>
               <div className="text-3xl font-bold text-gray-900">{s.value}</div>
               <div className="text-sm text-gray-500 mt-1">{s.label}</div>
             </div>

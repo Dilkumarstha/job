@@ -24,7 +24,7 @@ export default async function AuditPage({ searchParams }: AuditPageProps) {
       </AnimatedSection>
 
       {logs.length === 0 ? (
-        <EmptyState icon="📋" heading="No audit logs yet" subtext="Admin actions will be recorded here." />
+        <EmptyState heading="No audit logs yet" subtext="Admin actions will be recorded here." />
       ) : (
         <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
           <div className="overflow-x-auto">

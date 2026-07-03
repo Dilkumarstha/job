@@ -41,7 +41,6 @@ export default async function ApplicantsPage({ params }: ApplicantsPageProps) {
 
       {applicants.length === 0 ? (
         <EmptyState
-          icon="👥"
           heading="No applicants yet"
           subtext="Applicants will appear here once they apply."
         />

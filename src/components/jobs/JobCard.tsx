@@ -132,7 +132,7 @@ export default function JobCard({
           </span>
           {salaryText && (
             <span className="bg-amber-50/60 text-amber-600 text-[11px] font-bold px-2.5 py-1 rounded-lg border border-amber-100/20">
-              ⚡ {salaryText}
+              {salaryText}
             </span>
           )}
         </div>

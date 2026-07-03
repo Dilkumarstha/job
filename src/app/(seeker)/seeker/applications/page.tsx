@@ -16,7 +16,7 @@ const statusStyles: Record<string, string> = {
 const statusLabel: Record<string, string> = {
   PENDING: "Applied",
   REVIEWED: "Under Review",
-  APPROVED: "Approved 🎉",
+  APPROVED: "Approved",
   REJECTED: "Not Selected",
 };
 
@@ -41,7 +41,6 @@ export default async function ApplicationsPage() {
       {applications.length === 0 ? (
         <div className="py-12">
           <EmptyState
-            icon="📋"
             heading="No applications yet"
             subtext="Start applying to jobs from your feed or search."
             action={
@@ -55,7 +54,7 @@ export default async function ApplicationsPage() {
           />
         </div>
       ) : (
-        <AnimatedGrid className="space-y-5">
+        <AnimatedGrid className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {applications.map((app) => {
             const job = app.jobId as unknown as {
               _id: string;
@@ -69,7 +68,7 @@ export default async function ApplicationsPage() {
                 key={app._id.toString()}
                 className="block"
               >
-                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition">
+                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition h-full">
                   {/* Top row */}
                   <div className="flex items-start justify-between gap-4">
                     <div>
@@ -104,14 +103,11 @@ export default async function ApplicationsPage() {
                   {/* Company message */}
                   {app.message && (app.status === "APPROVED" || app.status === "REJECTED") && (
                     <div
-                      className={`mt-4 p-4 rounded-xl text-sm border flex gap-3 items-start ${app.status === "APPROVED"
+                      className={`mt-4 p-4 rounded-xl text-sm border ${app.status === "APPROVED"
                           ? "bg-green-50 border-green-200 text-green-800"
                           : "bg-red-50 border-red-200 text-red-800"
                         }`}
                     >
-                      <span className="text-base shrink-0">
-                        {app.status === "APPROVED" ? "🎉" : "📋"}
-                      </span>
                       <div>
                         <p className="font-semibold mb-0.5">Message from company</p>
                         <p>{app.message}</p>

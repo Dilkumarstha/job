@@ -12,12 +12,12 @@ interface TopSearchBarProps {
 }
 
 const SHORTCUTS = [
-  { label: "⚙️ Engineering",     q: "Engineering"     },
-  { label: "🎨 Design",           q: "Design"           },
-  { label: "📦 Product",          q: "Product"          },
-  { label: "📊 Data",             q: "Data & Analytics" },
-  { label: "📣 Marketing",        q: "Marketing"        },
-  { label: "🌍 Remote",           q: "Remote"           },
+  { label: "Engineering", q: "Engineering" },
+  { label: "Design", q: "Design" },
+  { label: "Product", q: "Product" },
+  { label: "Data", q: "Data & Analytics" },
+  { label: "Marketing", q: "Marketing" },
+  { label: "Remote", q: "Remote" },
 ];
 
 export default function TopSearchBar({
@@ -26,22 +26,21 @@ export default function TopSearchBar({
   targetPath = "/seeker/search",
   showShortcuts = true,
 }: TopSearchBarProps) {
-  const router   = useRouter();
-  const [q, setQ]               = useState(defaultQ);
+  const router = useRouter();
+  const [q, setQ] = useState(defaultQ);
   const [location, setLocation] = useState(defaultLocation);
-  const [focused, setFocused]   = useState(false);
+  const [focused, setFocused] = useState(false);
 
   const go = (query: string, loc = location) => {
     const params = new URLSearchParams();
     if (query.trim()) params.set("q", query.trim());
-    if (loc.trim())   params.set("location", loc.trim());
+    if (loc.trim()) params.set("location", loc.trim());
     const queryStr = params.toString();
     router.push(`${targetPath}${queryStr ? `?${queryStr}` : ""}`);
   };
 
   return (
     <div className="w-full max-w-3xl flex flex-col gap-4">
-
       {/* ── Search Pill Wrapper with Ultra Soft Shadow & Subtle Gray Border ── */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
@@ -50,16 +49,27 @@ export default function TopSearchBar({
         className={`
           flex items-center bg-white rounded-full
           px-2.5 py-2 gap-0 border transition-all duration-300
-          ${focused
-            ? "border-emerald-500/40 shadow-[0_12px_32px_rgba(5,150,105,0.06),_0_0_0_4px_rgba(5,150,105,0.05)]"
-            : "border-gray-200/60 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:border-gray-300/80 hover:shadow-[0_12px_32px_rgba(0,0,0,0.025)]"
+          ${
+            focused
+              ? "border-emerald-500/40 shadow-[0_12px_32px_rgba(5,150,105,0.06),_0_0_0_4px_rgba(5,150,105,0.05)]"
+              : "border-gray-200/60 shadow-[0_8px_30px_rgba(0,0,0,0.015)] hover:border-gray-300/80 hover:shadow-[0_12px_32px_rgba(0,0,0,0.025)]"
           }
         `}
       >
         {/* Keyword field */}
         <div className="flex items-center gap-3 flex-1 px-4 py-0.5">
-          <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+          <svg
+            className="w-4 h-4 text-gray-400 shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2.2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
+            />
           </svg>
           <input
             type="text"
@@ -76,8 +86,18 @@ export default function TopSearchBar({
               onClick={() => setQ("")}
               className="shrink-0 w-5 h-5 flex items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-700 transition-all"
             >
-              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-3 h-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           )}
@@ -88,8 +108,18 @@ export default function TopSearchBar({
 
         {/* Location field */}
         <div className="flex items-center gap-3 flex-[0.7] px-4 py-0.5">
-          <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 21s-6-5.686-6-10a6 6 0 0 1 12 0c0 4.314-6 10-6 10z" />
+          <svg
+            className="w-4 h-4 text-gray-400 shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2.2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 21s-6-5.686-6-10a6 6 0 0 1 12 0c0 4.314-6 10-6 10z"
+            />
             <circle cx="12" cy="11" r="2" />
           </svg>
           <input
@@ -126,12 +156,7 @@ export default function TopSearchBar({
             <button
               key={sq}
               onClick={() => go(sq)}
-              className="
-                px-4 py-1.5 text-xs font-semibold rounded-full
-                bg-white border border-gray-200/60 text-gray-500
-                hover:border-emerald-500/50 hover:text-emerald-700 hover:bg-emerald-50/40
-                transition-all duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.015)]
-              "
+              className="px-4 py-1.5 text-xs font-semibold rounded-full bg-white border border-gray-200/60 text-gray-500 hover:border-emerald-500/50 hover:text-emerald-700 hover:bg-emerald-50/40 transition-all duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.015)]"
             >
               {label}
             </button>

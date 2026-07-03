@@ -90,7 +90,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           {jobs.length === 0 ? (
             <div className="py-12">
               <EmptyState
-                icon="🔍"
                 heading="No jobs match your search"
                 subtext="Try different keywords or remove some filters."
               />

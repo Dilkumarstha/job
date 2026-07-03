@@ -30,6 +30,7 @@ interface HomePageClientProps {
   hiringCompanies: HiringCompany[];
   jobsCount: number;
   companyNameMap: Record<string, string>;
+  savedJobIds: string[];
   session: any;
 }
 
@@ -39,8 +40,11 @@ export default function HomePageClient({
   hiringCompanies,
   jobsCount,
   companyNameMap,
+  savedJobIds,
   session,
 }: HomePageClientProps) {
+  const savedJobIdSet = new Set(savedJobIds);
+
   if (isSeeker) {
     return (
       <div className="min-h-screen bg-[--color-bg]">
@@ -56,7 +60,8 @@ export default function HomePageClient({
               Find your next role
             </h1>
             <p className="text-base text-[--color-muted] max-w-md leading-relaxed">
-              Personalised listings ranked by match accuracy — the best fits appear first.
+              Personalised listings ranked by match accuracy — the best fits
+              appear first.
             </p>
             <div className="w-full flex justify-center mt-2">
               <TopSearchBar />
@@ -68,13 +73,18 @@ export default function HomePageClient({
               { value: scoredJobs.length, label: "Matched jobs" },
               { value: hiringCompanies.length, label: "Companies hiring" },
               {
-                value: scoredJobs.filter(({ score }) => (score ?? 0) >= 0.7).length,
+                value: scoredJobs.filter(({ score }) => (score ?? 0) >= 0.7)
+                  .length,
                 label: "Strong matches (70%+)",
               },
             ].map(({ value, label }, i) => (
               <AnimatedGridItem key={label} index={i} className="stat-card">
-                <span className="text-3xl font-extrabold text-teal-600 leading-none">{value}</span>
-                <span className="text-xs text-[--color-muted] mt-1">{label}</span>
+                <span className="text-3xl font-extrabold text-teal-600 leading-none">
+                  {value}
+                </span>
+                <span className="text-xs text-[--color-muted] mt-1">
+                  {label}
+                </span>
               </AnimatedGridItem>
             ))}
           </AnimatedGrid>
@@ -102,7 +112,11 @@ export default function HomePageClient({
                       <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center text-sm font-bold text-teal-600 shrink-0">
                         {company.logoUrl ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={company.logoUrl} alt={company.companyName} className="w-full h-full object-cover rounded-xl" />
+                          <img
+                            src={company.logoUrl}
+                            alt={company.companyName}
+                            className="w-full h-full object-cover rounded-xl"
+                          />
                         ) : (
                           company.companyName.charAt(0).toUpperCase()
                         )}
@@ -112,10 +126,13 @@ export default function HomePageClient({
                           {company.companyName}
                         </p>
                         {company.industry && (
-                          <p className="text-[0.7rem] text-[--color-subtle] truncate mt-0.5">{company.industry}</p>
+                          <p className="text-[0.7rem] text-[--color-subtle] truncate mt-0.5">
+                            {company.industry}
+                          </p>
                         )}
                         <p className="text-[0.7rem] font-semibold text-teal-600 mt-1">
-                          {company.jobCount} open {company.jobCount === 1 ? "role" : "roles"}
+                          {company.jobCount} open{" "}
+                          {company.jobCount === 1 ? "role" : "roles"}
                         </p>
                       </div>
                     </Link>
@@ -129,7 +146,9 @@ export default function HomePageClient({
             <div className="flex items-end justify-between pb-5 border-b border-[--color-border] mb-8">
               <div>
                 <p className="section-label mb-1">Recommended</p>
-                <h2 className="text-xl font-bold text-[--color-fg] leading-tight">Your Matches</h2>
+                <h2 className="text-xl font-bold text-[--color-fg] leading-tight">
+                  Your Matches
+                </h2>
               </div>
               <span className="text-sm text-[--color-subtle]">
                 {scoredJobs.length} {scoredJobs.length === 1 ? "job" : "jobs"}
@@ -137,17 +156,22 @@ export default function HomePageClient({
             </div>
             {scoredJobs.length === 0 ? (
               <EmptyState
-                icon="🔍"
                 heading="No matching jobs yet"
                 subtext="Complete your profile to improve your matches, or check back soon."
                 action={
-                  <Link href="/seeker/profile" className="btn-primary rounded-xl px-6 py-2.5 text-sm">
+                  <Link
+                    href="/seeker/profile"
+                    className="btn-primary rounded-xl px-6 py-2.5 text-sm"
+                  >
                     Update Profile
                   </Link>
                 }
               />
             ) : (
-              <AnimatedGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" delay={0.24}>
+              <AnimatedGrid
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                delay={0.24}
+              >
                 {scoredJobs.map(({ job, score }, i) => (
                   <AnimatedGridItem key={job._id.toString()} index={i}>
                     <JobCard
@@ -159,6 +183,7 @@ export default function HomePageClient({
                       }}
                       companyName={companyNameMap[job.companyId.toString()]}
                       score={score}
+                      isSaved={savedJobIdSet.has(job._id.toString())}
                       showActions
                     />
                   </AnimatedGridItem>
@@ -175,9 +200,13 @@ export default function HomePageClient({
     <main className="min-h-screen bg-[--color-bg]">
       <section className="bg-white border-b border-[--color-border]">
         <div className="page-container pt-20 pb-16 flex flex-col items-center text-center gap-5">
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+          >
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-teal-50 border border-teal-200 text-teal-700 text-xs font-semibold">
-              ⚡ AI-powered job matching
+              AI-powered job matching
             </span>
           </motion.div>
 
@@ -187,7 +216,8 @@ export default function HomePageClient({
             transition={{ duration: 0.4, delay: 0.07 }}
             className="text-5xl sm:text-6xl font-extrabold text-[--color-fg] leading-tight tracking-tight max-w-2xl"
           >
-            Find your next <br />opportunity{" "}
+            Find your next <br />
+            opportunity{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-teal-700">
               smarter
             </span>
@@ -219,15 +249,22 @@ export default function HomePageClient({
             className="flex items-center gap-6 mt-4 text-sm text-[--color-muted]"
           >
             <span>
-              <strong className="text-[--color-fg] font-semibold">{jobsCount}+</strong> open roles
+              <strong className="text-[--color-fg] font-semibold">
+                {jobsCount}+
+              </strong>{" "}
+              open roles
             </span>
             <span className="w-1 h-1 rounded-full bg-[--color-border-2]" />
             <span>
-              <strong className="text-[--color-fg] font-semibold">{hiringCompanies.length}</strong> companies hiring
+              <strong className="text-[--color-fg] font-semibold">
+                {hiringCompanies.length}
+              </strong>{" "}
+              companies hiring
             </span>
             <span className="w-1 h-1 rounded-full bg-[--color-border-2]" />
             <span>
-              <strong className="text-[--color-fg] font-semibold">Free</strong> to join
+              <strong className="text-[--color-fg] font-semibold">Free</strong>{" "}
+              to join
             </span>
           </motion.div>
         </div>
@@ -238,7 +275,9 @@ export default function HomePageClient({
           <AnimatedSection delay={0.05}>
             <div className="flex items-center justify-between mb-4">
               <p className="section-label">Actively Hiring</p>
-              <span className="text-xs text-[--color-subtle]">{hiringCompanies.length} companies</span>
+              <span className="text-xs text-[--color-subtle]">
+                {hiringCompanies.length} companies
+              </span>
             </div>
             <div className="scroll-x">
               {hiringCompanies.map((company, i) => (
@@ -255,7 +294,11 @@ export default function HomePageClient({
                     <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center text-sm font-bold text-teal-600 shrink-0">
                       {company.logoUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={company.logoUrl} alt={company.companyName} className="w-full h-full object-cover rounded-xl" />
+                        <img
+                          src={company.logoUrl}
+                          alt={company.companyName}
+                          className="w-full h-full object-cover rounded-xl"
+                        />
                       ) : (
                         company.companyName.charAt(0).toUpperCase()
                       )}
@@ -265,10 +308,13 @@ export default function HomePageClient({
                         {company.companyName}
                       </p>
                       {company.industry && (
-                        <p className="text-[0.7rem] text-[--color-subtle] truncate mt-0.5">{company.industry}</p>
+                        <p className="text-[0.7rem] text-[--color-subtle] truncate mt-0.5">
+                          {company.industry}
+                        </p>
                       )}
                       <p className="text-[0.7rem] font-semibold text-teal-600 mt-1">
-                        {company.jobCount} open {company.jobCount === 1 ? "role" : "roles"}
+                        {company.jobCount} open{" "}
+                        {company.jobCount === 1 ? "role" : "roles"}
                       </p>
                     </div>
                   </Link>
@@ -282,14 +328,19 @@ export default function HomePageClient({
           <div className="flex items-end justify-between pb-5 border-b border-[--color-border] mb-8">
             <div>
               <p className="section-label mb-1">Browse</p>
-              <h2 className="text-xl font-bold text-[--color-fg] tracking-tight">Latest Positions</h2>
+              <h2 className="text-xl font-bold text-[--color-fg] tracking-tight">
+                Latest Positions
+              </h2>
             </div>
             <div className="flex items-center gap-3">
               <span className="text-sm text-[--color-subtle]">
                 {scoredJobs.length} {scoredJobs.length === 1 ? "job" : "jobs"}
               </span>
               {!session && (
-                <Link href="/signup/seeker" className="btn-outline rounded-full px-4 py-1.5 text-xs">
+                <Link
+                  href="/signup/seeker"
+                  className="btn-outline rounded-full px-4 py-1.5 text-xs"
+                >
                   Sign in for match scores ✦
                 </Link>
               )}
@@ -298,20 +349,34 @@ export default function HomePageClient({
 
           {scoredJobs.length === 0 ? (
             <div className="card p-16">
-              <EmptyState icon="💼" heading="No jobs posted yet" subtext="Check back soon for new opportunities." />
+              <EmptyState
+                heading="No jobs posted yet"
+                subtext="Check back soon for new opportunities."
+              />
             </div>
           ) : (
-            <AnimatedGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" delay={0.16}>
+            <AnimatedGrid
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              delay={0.16}
+            >
               {scoredJobs.map(({ job }, i) => (
                 <AnimatedGridItem key={job._id.toString()} index={i}>
                   <JobCard
-                    job={{ ...job, _id: job._id.toString(), deadline: job.deadline, companyId: job.companyId.toString() }}
+                    job={{
+                      ...job,
+                      _id: job._id.toString(),
+                      deadline: job.deadline,
+                      companyId: job.companyId.toString(),
+                    }}
                     companyName={companyNameMap[job.companyId.toString()]}
                     showActions={false}
                   />
                   {!session && (
                     <p className="mt-2 text-center text-xs text-[--color-subtle]">
-                      <Link href="/login" className="text-teal-600 font-semibold hover:underline">
+                      <Link
+                        href="/login"
+                        className="text-teal-600 font-semibold hover:underline"
+                      >
                         Sign in to apply →
                       </Link>
                     </p>

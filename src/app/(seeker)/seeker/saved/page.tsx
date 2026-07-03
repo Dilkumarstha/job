@@ -38,7 +38,7 @@ export default async function SavedJobsPage() {
 
       {jobs.length === 0 ? (
         <EmptyState
-          icon="⭐"
+          // icon="⭐"
           heading="No saved jobs yet"
           subtext="Save jobs from your feed or search to find them here."
           action={
@@ -51,7 +51,7 @@ export default async function SavedJobsPage() {
           }
         />
       ) : (
-        <AnimatedGrid className="space-y-4">
+        <AnimatedGrid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {jobs.map((job) => (
             <AnimatedGridItem key={job._id.toString()} className="block">
               <JobCard

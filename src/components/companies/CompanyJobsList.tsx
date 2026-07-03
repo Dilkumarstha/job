@@ -260,7 +260,6 @@ export default function CompanyJobsList({
                 {filteredAndSortedJobs.length === 0 ? (
                     <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
                         <EmptyState
-                            icon="🔍"
                             heading="No matching jobs found"
                             subtext="Try adjusting the filters in the sidebar panel."
                         />

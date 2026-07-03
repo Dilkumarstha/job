@@ -19,7 +19,7 @@ export default async function AdminCompaniesPage() {
       </AnimatedSection>
 
       {companies.length === 0 ? (
-        <EmptyState icon="✅" heading="No pending companies" subtext="All company registrations have been reviewed." />
+        <EmptyState heading="No pending companies" subtext="All company registrations have been reviewed." />
       ) : (
         <AnimatedGrid className="space-y-4">
           {companies.map((company) => {

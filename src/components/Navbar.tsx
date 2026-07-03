@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import NotificationBell from "@/components/notifications/NotificationBell";
 
 export type NavRole = "JOBSEEKER" | "COMPANY" | "SUPERADMIN" | null;
@@ -38,12 +40,18 @@ const HOME_HREF: Record<string, string> = {
 };
 
 export default function Navbar({ role, signOutSlot }: NavbarProps) {
+  const pathname = usePathname();
   const links = role ? (NAV_LINKS[role] ?? []) : [];
   const homeHref = role ? (HOME_HREF[role] ?? "/") : "/";
   const isAdmin = role === "SUPERADMIN";
 
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
+
   return (
-    <header className="bg-[--color-surface]/95 backdrop-blur-sm border-b border-[--color-border] sticky top-0 z-40 shadow-xs">
+    <header className="bg-[--color-surface]/95 backdrop-blur-sm sticky top-0 z-40 shadow-xs">
       <div className="page-container h-16 flex items-center justify-between gap-6">
         {/* Logo */}
         <Link
@@ -61,15 +69,34 @@ export default function Navbar({ role, signOutSlot }: NavbarProps) {
         {/* Nav links */}
         {links.length > 0 && (
           <nav className="hidden md:flex items-center gap-1">
-            {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="btn-ghost text-sm px-3 py-1.5 rounded-xl"
-              >
-                {l.label}
-              </Link>
-            ))}
+            {links.map((l) => {
+              const active = isActive(l.href);
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={`text-sm px-3 py-1.5 rounded-xl transition-colors ${
+                    active
+                      ? "text-teal-700 font-semibold"
+                      : "text-[--color-muted] hover:text-[--color-fg]"
+                  }`}
+                >
+                  <span className="relative">
+                    {l.label}
+                    {active && (
+                      <motion.span
+                        layoutId="nav-underline"
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+                        style={{ transformOrigin: "center" }}
+                        className="absolute -bottom-1 left-0 right-0 h-[3px] rounded-full bg-teal-500"
+                      />
+                    )}
+                  </span>
+                </Link>
+              );
+            })}
           </nav>
         )}
 

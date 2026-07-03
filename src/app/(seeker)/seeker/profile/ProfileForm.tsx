@@ -176,7 +176,7 @@ export default function SeekerProfileForm({ profile, userId }: SeekerProfileForm
             transition={{ duration: 0.3 }}
             className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-2xl text-green-700 text-sm shadow-sm"
           >
-            <span className="text-xl">✅</span>
+            {/* <span className="text-xl">✅</span> */}
             <span className="font-medium">Profile updated successfully!</span>
           </motion.div>
         )}
@@ -189,14 +189,16 @@ export default function SeekerProfileForm({ profile, userId }: SeekerProfileForm
             transition={{ duration: 0.3 }}
             className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700 text-sm shadow-sm"
           >
-            <span className="text-xl">⚠️</span>
+            {/* <span className="text-xl">⚠️</span> */}
             <span className="font-medium">{serverError}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* — Section 1: Basic Info — */}
-      <Section title="Basic Information" icon="👤" delay={0.05}>
+      <Section title="Basic Information" 
+      // icon="👤"
+       delay={0.05}>
         <div className="space-y-4">
           <Field label="Full name" required error={errors.fullName?.message}>
             <input
@@ -242,7 +244,10 @@ export default function SeekerProfileForm({ profile, userId }: SeekerProfileForm
       </Section>
 
       {/* — Section 2: Skills — */}
-      <Section title="Skills" icon="⚡" delay={0.1}>
+      <Section 
+      title="Skills" 
+      // icon="⚡" 
+      delay={0.1}>
         <p className="text-xs text-gray-400 mb-3">Type a skill and press Enter or comma to add it.</p>
         <Controller
           name="skills"
@@ -254,7 +259,9 @@ export default function SeekerProfileForm({ profile, userId }: SeekerProfileForm
       </Section>
 
       {/* — Section 3: Interests — */}
-      <Section title="Job Category Interests" icon="🎯" delay={0.15}>
+      <Section title="Job Category Interests" 
+      // icon="🎯"
+       delay={0.15}>
         <p className="text-xs text-gray-400 mb-3">Select the categories you want to see in your feed.</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           <Controller
@@ -302,7 +309,9 @@ export default function SeekerProfileForm({ profile, userId }: SeekerProfileForm
       </Section>
 
       {/* — Section 4: Resume — */}
-      <Section title="Resume" icon="📄" delay={0.2}>
+      <Section title="Resume" 
+      // icon="📄" 
+      delay={0.2}>
         {resumeUrl && (
           <motion.div
             initial={{ opacity: 0, scale: 0.97 }}

@@ -151,7 +151,6 @@ export default function RelatedJobsSection({
             >
               {filtered.length === 0 ? (
                 <EmptyState
-                  icon={hasFilters ? "🔍" : tab === "similar" ? "💼" : "🏢"}
                   heading={
                     hasFilters
                       ? "No jobs match your filters"
