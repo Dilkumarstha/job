@@ -8,6 +8,8 @@ import SeekerProfile from "@/models/SeekerProfile";
 import Application from "@/models/Application";
 import SavedJob from "@/models/SavedJob";
 import CompanyFollow from "@/models/CompanyFollow";
+import Job from "@/models/Job";
+import { createNotification } from "@/lib/notifications";
 import { onboardingSchema, updateSeekerProfileSchema } from "@/lib/validations/profile";
 
 async function requireSeeker() {
@@ -97,6 +99,28 @@ export async function applyToJob(
       phone: data.phone,
       resumeUrl: data.resumeUrl,
     });
+
+    // Look up job + seeker name to send a rich notification to the company
+    const [job, seekerProfile] = await Promise.all([
+      Job.findById(jobId).select("title companyId").lean(),
+      SeekerProfile.findOne({ userId: session.user.id }).select("fullName").lean(),
+    ]);
+
+    if (job) {
+      const seekerName = seekerProfile?.fullName ?? session.user.email;
+      await createNotification(
+        job.companyId.toString(),
+        "NEW_APPLICANT",
+        `${seekerName} applied for your job "${job.title}"`,
+        {
+          jobId: jobId,
+          jobTitle: job.title,
+          seekerId: session.user.id,
+          seekerName,
+        }
+      );
+    }
+
     revalidatePath("/seeker/applications");
     return { ok: true };
   } catch (err: unknown) {

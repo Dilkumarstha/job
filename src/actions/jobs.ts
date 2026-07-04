@@ -128,6 +128,41 @@ export async function getCompanyJobs(companyId: string) {
   return jobs;
 }
 
+export async function getCompanyJobsWithCounts(companyId: string) {
+  await connectDB();
+
+  const jobs = await Job.find({ companyId }).sort({ createdAt: -1 }).lean();
+
+  if (jobs.length === 0) return [];
+
+  const jobIds = jobs.map((j) => j._id);
+
+  // Aggregate total applicants per job
+  const totalCounts = await Application.aggregate([
+    { $match: { jobId: { $in: jobIds } } },
+    { $group: { _id: "$jobId", count: { $sum: 1 } } },
+  ]);
+
+  // Aggregate "new" applicants per job (applied in the last 24 hours)
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const newCounts = await Application.aggregate([
+    { $match: { jobId: { $in: jobIds }, appliedAt: { $gte: oneDayAgo } } },
+    { $group: { _id: "$jobId", count: { $sum: 1 } } },
+  ]);
+
+  const totalMap = new Map(totalCounts.map((r) => [r._id.toString(), r.count as number]));
+  const newMap = new Map(newCounts.map((r) => [r._id.toString(), r.count as number]));
+
+  return jobs.map((job) => {
+    const id = job._id.toString();
+    return {
+      ...job,
+      applicantCount: totalMap.get(id) ?? 0,
+      newApplicantCount: newMap.get(id) ?? 0,
+    };
+  });
+}
+
 export async function getJobApplicants(jobId: string) {
   const session = await requireCompany();
   await connectDB();

@@ -25,6 +25,7 @@ const TYPE_META: Record<string, { icon: string; color: string }> = {
   ACCOUNT_REACTIVATED:        { icon: "✅", color: "bg-green-50 border-green-100" },
   COMPANY_APPROVED:           { icon: "🎉", color: "bg-teal-50 border-teal-100"   },
   COMPANY_REJECTED:           { icon: "❌", color: "bg-red-50  border-red-100"    },
+  NEW_APPLICANT:              { icon: "👤", color: "bg-violet-50 border-violet-100" },
 };
 
 const DEFAULT_META = { icon: "🔔", color: "bg-slate-50 border-slate-100" };
@@ -171,7 +172,9 @@ export default function NotificationBell() {
                   const jobId = n.metadata?.jobId;
 
                   const href = jobId
-                    ? `/jobs/${jobId}`
+                    ? n.type === "NEW_APPLICANT"
+                      ? `/company/jobs/${jobId}/applicants`
+                      : `/jobs/${jobId}`
                     : n.type === "COMPANY_APPROVED"
                     ? "/company/dashboard"
                     : n.type === "ACCOUNT_SUSPENDED"

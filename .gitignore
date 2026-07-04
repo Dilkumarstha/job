@@ -44,3 +44,8 @@ next-env.d.ts
 # uploads (user-generated files — swap for S3/Cloudinary in prod)
 /public/uploads/**
 !/public/uploads/**/.gitkeep
+
+
+# extra 
+
+docs

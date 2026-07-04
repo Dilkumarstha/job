@@ -6,7 +6,8 @@ export type NotificationType =
   | "ACCOUNT_SUSPENDED"
   | "ACCOUNT_REACTIVATED"
   | "COMPANY_APPROVED"
-  | "COMPANY_REJECTED";
+  | "COMPANY_REJECTED"
+  | "NEW_APPLICANT";
 
 export interface INotification extends Document {
   userId: Types.ObjectId;
@@ -17,6 +18,8 @@ export interface INotification extends Document {
     jobId?: string;
     jobTitle?: string;
     companyName?: string;
+    seekerId?: string;
+    seekerName?: string;
   };
   createdAt: Date;
   updatedAt: Date;
@@ -38,6 +41,7 @@ const NotificationSchema = new Schema<INotification>(
         "ACCOUNT_REACTIVATED",
         "COMPANY_APPROVED",
         "COMPANY_REJECTED",
+        "NEW_APPLICANT",
       ] as NotificationType[],
       required: true,
     },

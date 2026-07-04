@@ -38,8 +38,12 @@ const roleConfig = {
 
 export default function SignupPage() {
   const [role, setRole] = useState<Role>("seeker");
-  const [serverError, setServerError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+
+  // ── Each form gets its own independent error + loading state ──────────
+  const [seekerError, setSeekerError]     = useState("");
+  const [companyError, setCompanyError]   = useState("");
+  const [seekerLoading, setSeekerLoading] = useState(false);
+  const [companyLoading, setCompanyLoading] = useState(false);
 
   const seekerForm = useForm<SignupSeekerInput>({
     resolver: zodResolver(signupSeekerSchema),
@@ -52,28 +56,29 @@ export default function SignupPage() {
   const isSeeker = role === "seeker";
 
   const submitSeeker = async (data: SignupSeekerInput) => {
-    setIsLoading(true);
-    setServerError("");
+    setSeekerLoading(true);
+    setSeekerError("");
     const fd = new FormData();
     Object.entries(data).forEach(([k, v]) => fd.append(k, v));
     const res = await signupSeeker(fd);
     if (res?.error) {
-      setServerError(res.error);
-      setIsLoading(false);
+      setSeekerError(res.error);
+      setSeekerLoading(false);
     }
+    // if no error, server redirects — no need to reset loading
   };
 
   const submitCompany = async (data: SignupCompanyInput) => {
-    setIsLoading(true);
-    setServerError("");
+    setCompanyLoading(true);
+    setCompanyError("");
     const fd = new FormData();
     Object.entries(data).forEach(([k, v]) => {
       if (v !== undefined) fd.append(k, String(v));
     });
     const res = await signupCompany(fd);
     if (res?.error) {
-      setServerError(res.error);
-      setIsLoading(false);
+      setCompanyError(res.error);
+      setCompanyLoading(false);
     }
   };
 
@@ -101,7 +106,7 @@ export default function SignupPage() {
             </p>
           </div>
 
-          {/* Role selector */}
+          {/* Role selector — switching tabs does NOT clear the other form's error */}
           <div className="flex gap-2 mb-6 p-1 bg-gray-100 rounded-xl">
             {(["seeker", "company"] as const).map((r) => {
               const active = role === r;
@@ -109,14 +114,9 @@ export default function SignupPage() {
                 <button
                   key={r}
                   type="button"
-                  onClick={() => {
-                    setRole(r);
-                    setServerError("");
-                  }}
+                  onClick={() => setRole(r)}
                   className={`relative flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-lg transition-all ${
-                    active
-                      ? "text-white"
-                      : "text-gray-600 hover:text-gray-900"
+                    active ? "text-white" : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
                   {active && (
@@ -135,55 +135,68 @@ export default function SignupPage() {
             })}
           </div>
 
-          {/* Server error */}
-          <AnimatePresence>
-            {serverError && (
-              <motion.div
-                key="server-error"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden mb-4"
-              >
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-                  {serverError}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Form */}
-          <form onSubmit={isSeeker ? seekerForm.handleSubmit(submitSeeker) : companyForm.handleSubmit(submitCompany)}>
-            <AnimatePresence mode="wait">
-              {isSeeker ? (
+          {/* Forms rendered simultaneously so state is never lost on tab switch */}
+          {/* Only the active one is visible; the hidden one keeps its form state */}
+          <div>
+            {/* ── Seeker form ─────────────────────────────────────────── */}
+            <div style={{ display: isSeeker ? "block" : "none" }}>
+              <AnimatePresence>
+                {seekerError && (
+                  <motion.div
+                    key="seeker-error"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden mb-4"
+                  >
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                      {seekerError}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <form onSubmit={seekerForm.handleSubmit(submitSeeker)}>
                 <SeekerFields
-                  key="seeker"
                   register={seekerForm.register}
                   errors={seekerForm.formState.errors}
-                  isLoading={isLoading}
+                  isLoading={seekerLoading}
                 />
-              ) : (
+              </form>
+            </div>
+
+            {/* ── Company form ─────────────────────────────────────────── */}
+            <div style={{ display: isSeeker ? "none" : "block" }}>
+              <AnimatePresence>
+                {companyError && (
+                  <motion.div
+                    key="company-error"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden mb-4"
+                  >
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                      {companyError}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <form onSubmit={companyForm.handleSubmit(submitCompany)}>
                 <CompanyFields
-                  key="company"
                   register={companyForm.register}
                   errors={companyForm.formState.errors}
-                  isLoading={isLoading}
+                  isLoading={companyLoading}
                 />
-              )}
-            </AnimatePresence>
-          </form>
+              </form>
+            </div>
+          </div>
         </div>
 
         <p className="mt-4 text-center text-sm text-gray-500">
-          {isSeeker
-            ? "Are you a company? "
-            : "Looking for a job? "}
+          {isSeeker ? "Are you a company? " : "Looking for a job? "}
           <button
             type="button"
-            onClick={() => {
-              setRole(isSeeker ? "company" : "seeker");
-              setServerError("");
-            }}
+            onClick={() => setRole(isSeeker ? "company" : "seeker")}
             className="text-teal-700 font-medium hover:underline"
           >
             {isSeeker ? "Register your company" : "Sign up as Job Seeker"}
@@ -204,84 +217,77 @@ function SeekerFields({
   isLoading: boolean;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      transition={{ duration: 0.25, ease: "easeOut" }}
-    >
-      <StaggerList className="space-y-4">
-        <StaggerItem>
-          <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
-              Full name
-            </label>
-            <input
-              id="fullName"
-              {...register("fullName")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-              placeholder="Jane Doe"
-            />
-            {errors.fullName && <p className="mt-1 text-xs text-red-600">{errors.fullName.message}</p>}
-          </div>
-        </StaggerItem>
-        <StaggerItem>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email address
-            </label>
-            <input
-              id="email"
-              type="email"
-              {...register("email")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-              placeholder="jane@example.com"
-            />
-            {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
-          </div>
-        </StaggerItem>
-        <StaggerItem>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              {...register("password")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-              placeholder="Min. 8 characters, 1 uppercase, 1 number"
-            />
-            {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>}
-          </div>
-        </StaggerItem>
-        <StaggerItem>
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-              Confirm password
-            </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              {...register("confirmPassword")}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-              placeholder="Re-enter your password"
-            />
-            {errors.confirmPassword && <p className="mt-1 text-xs text-red-600">{errors.confirmPassword.message}</p>}
-          </div>
-        </StaggerItem>
-        <StaggerItem>
-          <motion.button
-            type="submit"
-            disabled={isLoading}
-            whileTap={{ scale: 0.97 }}
-            className="w-full py-2.5 bg-teal-700 text-white text-sm font-semibold rounded-lg hover:bg-teal-800 disabled:opacity-60 transition mt-2"
-          >
-            {isLoading ? "Creating account…" : "Create account"}
-          </motion.button>
-        </StaggerItem>
-      </StaggerList>
-    </motion.div>
+    <StaggerList className="space-y-4">
+      <StaggerItem>
+        <div>
+          <label htmlFor="sk-fullName" className="block text-sm font-medium text-gray-700 mb-1">
+            Full name
+          </label>
+          <input
+            id="sk-fullName"
+            {...register("fullName")}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+            placeholder="Jane Doe"
+          />
+          {errors.fullName && <p className="mt-1 text-xs text-red-600">{errors.fullName.message}</p>}
+        </div>
+      </StaggerItem>
+      <StaggerItem>
+        <div>
+          <label htmlFor="sk-email" className="block text-sm font-medium text-gray-700 mb-1">
+            Email address
+          </label>
+          <input
+            id="sk-email"
+            type="email"
+            {...register("email")}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+            placeholder="jane@example.com"
+          />
+          {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
+        </div>
+      </StaggerItem>
+      <StaggerItem>
+        <div>
+          <label htmlFor="sk-password" className="block text-sm font-medium text-gray-700 mb-1">
+            Password
+          </label>
+          <input
+            id="sk-password"
+            type="password"
+            {...register("password")}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+            placeholder="Min. 8 characters, 1 uppercase, 1 number"
+          />
+          {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>}
+        </div>
+      </StaggerItem>
+      <StaggerItem>
+        <div>
+          <label htmlFor="sk-confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            Confirm password
+          </label>
+          <input
+            id="sk-confirmPassword"
+            type="password"
+            {...register("confirmPassword")}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+            placeholder="Re-enter your password"
+          />
+          {errors.confirmPassword && <p className="mt-1 text-xs text-red-600">{errors.confirmPassword.message}</p>}
+        </div>
+      </StaggerItem>
+      <StaggerItem>
+        <motion.button
+          type="submit"
+          disabled={isLoading}
+          whileTap={{ scale: 0.97 }}
+          className="w-full py-2.5 bg-teal-700 text-white text-sm font-semibold rounded-lg hover:bg-teal-800 disabled:opacity-60 transition mt-2"
+        >
+          {isLoading ? "Creating account…" : "Create account"}
+        </motion.button>
+      </StaggerItem>
+    </StaggerList>
   );
 }
 
@@ -295,23 +301,18 @@ function CompanyFields({
   isLoading: boolean;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      transition={{ duration: 0.25, ease: "easeOut" }}
-    >
+    <>
       <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-xs">
         Your account will be reviewed by a SuperAdmin before you can post jobs.
       </div>
       <StaggerList className="space-y-4">
         <StaggerItem>
           <div>
-            <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="co-companyName" className="block text-sm font-medium text-gray-700 mb-1">
               Company name
             </label>
             <input
-              id="companyName"
+              id="co-companyName"
               {...register("companyName")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="Acme Corp"
@@ -321,11 +322,11 @@ function CompanyFields({
         </StaggerItem>
         <StaggerItem>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="co-email" className="block text-sm font-medium text-gray-700 mb-1">
               Email address
             </label>
             <input
-              id="email"
+              id="co-email"
               type="email"
               {...register("email")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
@@ -336,11 +337,11 @@ function CompanyFields({
         </StaggerItem>
         <StaggerItem>
           <div>
-            <label htmlFor="industry" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="co-industry" className="block text-sm font-medium text-gray-700 mb-1">
               Industry <span className="text-gray-400">(optional)</span>
             </label>
             <input
-              id="industry"
+              id="co-industry"
               {...register("industry")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="e.g. Technology"
@@ -349,11 +350,11 @@ function CompanyFields({
         </StaggerItem>
         <StaggerItem>
           <div>
-            <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="co-website" className="block text-sm font-medium text-gray-700 mb-1">
               Website <span className="text-gray-400">(optional)</span>
             </label>
             <input
-              id="website"
+              id="co-website"
               type="url"
               {...register("website")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
@@ -364,11 +365,11 @@ function CompanyFields({
         </StaggerItem>
         <StaggerItem>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="co-password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
             <input
-              id="password"
+              id="co-password"
               type="password"
               {...register("password")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
@@ -379,11 +380,11 @@ function CompanyFields({
         </StaggerItem>
         <StaggerItem>
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="co-confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
               Confirm password
             </label>
             <input
-              id="confirmPassword"
+              id="co-confirmPassword"
               type="password"
               {...register("confirmPassword")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
@@ -403,6 +404,6 @@ function CompanyFields({
           </motion.button>
         </StaggerItem>
       </StaggerList>
-    </motion.div>
+    </>
   );
 }
