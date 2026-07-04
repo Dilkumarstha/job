@@ -1,0 +1,65 @@
+@startuml
+title HireHub Use Case Diagram
+
+left to right direction
+
+actor "Job Seeker" as Seeker
+actor "Company" as Company
+actor "Admin" as Admin
+
+usecase Register
+usecase Login
+usecase "Reset Password" as ResetPwd
+usecase "Browse & Search Jobs" as Browse
+usecase "View Job Details" as ViewJob
+usecase "Apply to Job" as Apply
+usecase "Track Application Status" as Track
+usecase "Save Job" as Save
+usecase "Follow Company" as Follow
+usecase "Manage Profile" as SeekerProfile
+usecase "Manage Company Profile" as CoProfile
+usecase "Post New Job" as Post
+usecase "Close or Edit Job" as EditJob
+usecase "View Applicants" as ViewApps
+usecase "Approve or Reject Applicant" as Review
+usecase "View Dashboard" as Dash
+usecase "Manage Users" as ManageUsers
+usecase "Approve or Reject Company" as ApproveCo
+usecase "View Audit Log" as Audit
+
+Seeker --> Register
+Seeker --> Login
+Seeker --> ResetPwd
+Seeker --> Browse
+Seeker --> ViewJob
+Seeker --> Apply
+Seeker --> Track
+Seeker --> Save
+Seeker --> Follow
+Seeker --> SeekerProfile
+
+Company --> Register
+Company --> Login
+Company --> ResetPwd
+Company --> CoProfile
+Company --> Post
+Company --> EditJob
+Company --> ViewApps
+Company --> Review
+Company --> Dash
+
+Admin --> Login
+Admin --> ManageUsers
+Admin --> ApproveCo
+Admin --> Audit
+Admin --> Dash
+
+Browse .> ViewJob : <<include>>
+ViewJob .> Apply : <<extend>>
+Apply .> Track : <<include>>
+Browse .> Save : <<extend>>
+Browse .> Follow : <<extend>>
+ViewApps .> Review : <<include>>
+Post .> EditJob : <<extend>>
+ManageUsers .> ApproveCo : <<extend>>
+@enduml

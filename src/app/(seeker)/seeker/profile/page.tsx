@@ -6,6 +6,7 @@ import Application from "@/models/Application";
 import SavedJob from "@/models/SavedJob";
 import SeekerProfileForm from "./ProfileForm";
 import ProfileShell from "./ProfileShell";
+import ChangePasswordForm from "@/components/ChangePassword";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -65,7 +66,10 @@ export default async function ProfilePage() {
       skills={profileData.skills ?? []}
       interests={profileData.interests ?? []}
     >
-      <SeekerProfileForm profile={profileData} userId={session.user.id} />
+      <div className="space-y-6">
+        <SeekerProfileForm profile={profileData} userId={session.user.id} />
+        <ChangePasswordForm />
+      </div>
     </ProfileShell>
   );
 }

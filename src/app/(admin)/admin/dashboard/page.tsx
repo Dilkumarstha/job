@@ -107,7 +107,7 @@ export default async function AdminDashboard() {
   //   teal: "border-teal-200 bg-teal-50",
   // };
 
-  const colorMap = {
+  const colorMap: Record<string, { bg: string; icon: string }> = {
     green: {
       bg: "bg-green-50",
       icon: "bg-green-100 text-green-600",

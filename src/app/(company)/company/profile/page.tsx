@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import CompanyProfile from "@/models/CompanyProfile";
 import { CompanyProfileForm } from "./ProfileForm";
+import ChangePasswordForm from "@/components/ChangePassword";
 
 export default async function CompanyProfilePage() {
   const session = await auth();
@@ -22,8 +23,11 @@ export default async function CompanyProfilePage() {
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Company Profile</h1>
-      <div className="bg-white rounded-2xl border border-gray-100 p-8">
-        <CompanyProfileForm profile={profileData} userId={session.user.id} />
+      <div className="space-y-6">
+        <div className="bg-white rounded-2xl border border-gray-100 p-8">
+          <CompanyProfileForm profile={profileData} userId={session.user.id} />
+        </div>
+        <ChangePasswordForm />
       </div>
     </div>
   );

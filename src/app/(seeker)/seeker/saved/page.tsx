@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import SavedJob from "@/models/SavedJob";
 import Job from "@/models/Job";
 import User from "@/models/User";
+import CompanyProfile from "@/models/CompanyProfile";
 import JobCard from "@/components/jobs/JobCard";
 import EmptyState from "@/components/ui/EmptyState";
 import Link from "next/link";
@@ -28,7 +29,13 @@ export default async function SavedJobsPage() {
   const jobs = await Job.find({
     _id: { $in: jobIds },
     companyId: { $in: activeCompanyIds },
+    status: "ACTIVE",
+    deadline: { $gt: new Date() },
   }).lean();
+
+  const companyIds = [...new Set(jobs.map((j) => j.companyId.toString()))];
+  const companyProfiles = await CompanyProfile.find({ userId: { $in: companyIds } }).select("userId companyName").lean();
+  const companyNameMap = new Map(companyProfiles.map((c) => [c.userId.toString(), c.companyName]));
 
   return (
     <div>
@@ -61,6 +68,7 @@ export default async function SavedJobsPage() {
                   deadline: job.deadline,
                   companyId: job.companyId.toString(),
                 }}
+                companyName={companyNameMap.get(job.companyId.toString())}
                 isSaved
                 showActions
               />

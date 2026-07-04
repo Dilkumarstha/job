@@ -6,6 +6,8 @@ import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import Job from "@/models/Job";
 import CompanyFollow from "@/models/CompanyFollow";
+import CompanyProfile from "@/models/CompanyProfile";
+import SavedJob from "@/models/SavedJob";
 import Application from "@/models/Application";
 import SeekerProfile from "@/models/SeekerProfile";
 import { createJobSchema, updateJobSchema } from "@/lib/validations/job";
@@ -44,11 +46,14 @@ export async function createJob(formData: FormData) {
 
   await connectDB();
 
-  await Job.create({
+  const job = await Job.create({
     ...result.data,
     companyId: session.user.id,
     status: "ACTIVE",
   });
+
+  const companyProfile = await CompanyProfile.findOne({ userId: session.user.id }).lean();
+  const companyName = companyProfile?.companyName ?? "A company";
 
   // Notify followers about the new job
   const follows = await CompanyFollow.find({
@@ -60,7 +65,8 @@ export async function createJob(formData: FormData) {
     await createBulkNotifications(
       followerIds,
       "NEW_JOB_POSTED",
-      `A company you follow just posted a new job: "${result.data.title}"`,
+      `${companyName} posted a new job: "${result.data.title}"`,
+      { jobId: job._id.toString(), jobTitle: result.data.title, companyName },
     );
   }
 
@@ -110,6 +116,7 @@ export async function closeJob(jobId: string) {
   if (!job) return { error: "Job not found or access denied" };
 
   await Job.findByIdAndUpdate(jobId, { status: "CLOSED" });
+  await SavedJob.deleteMany({ jobId });
 
   revalidatePath("/company/jobs");
   return { ok: true };

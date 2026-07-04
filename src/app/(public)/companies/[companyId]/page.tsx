@@ -9,6 +9,7 @@ import Job from "@/models/Job";
 import { auth } from "@/lib/auth";
 import { matchScore } from "@/lib/matchScore";
 import CompanyJobsList from "@/components/companies/CompanyJobsList";
+import FollowCompanyButton from "@/components/companies/FollowCompanyButton";
 
 interface CompanyProfilePageProps {
     params: Promise<{ companyId: string }>;
@@ -48,13 +49,20 @@ export default async function CompanyProfilePage({ params }: CompanyProfilePageP
     const session = await auth();
     const isSeeker = session?.user?.role === "JOBSEEKER";
 
+    let isFollowing = false;
+    let followedIds = new Set<string>();
+
+    if (isSeeker) {
+        const follows = await CompanyFollow.find({ seekerId: session.user.id }).lean();
+        followedIds = new Set(follows.map((f) => f.companyId.toString()));
+        isFollowing = followedIds.has(companyId);
+    }
+
     // Build the scored settings for jobs if seeker is logged in
     let scoredJobs: Array<{ job: any; score?: number }> = [];
 
     if (isSeeker) {
         const seekerProfile = await SeekerProfile.findOne({ userId: session.user.id }).lean();
-        const follows = await CompanyFollow.find({ seekerId: session.user.id }).lean();
-        const followedIds = new Set(follows.map((f) => f.companyId.toString()));
 
         if (seekerProfile) {
             const seekerInput = {
@@ -132,6 +140,12 @@ export default async function CompanyProfilePage({ params }: CompanyProfilePageP
                             </div>
 
                             <div className="flex flex-wrap gap-2.5 shrink-0">
+                                {isSeeker && (
+                                    <FollowCompanyButton
+                                        companyId={companyId}
+                                        initialFollowing={isFollowing}
+                                    />
+                                )}
                                 {profile.website ? (
                                     <a
                                         href={

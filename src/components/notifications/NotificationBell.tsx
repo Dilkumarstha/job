@@ -3,12 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, slideDownVariants, popVariants, staggerItemVariants } from "@/components/ui/Motion";
 
-interface Notification {
+interface NotificationItem {
   _id: string;
   type: string;
   message: string;
   read: boolean;
   createdAt: string;
+  metadata?: {
+    jobId?: string;
+    jobTitle?: string;
+    companyName?: string;
+  };
 }
 
 const POLL_INTERVAL = 30_000;
@@ -26,7 +31,7 @@ const DEFAULT_META = { icon: "🔔", color: "bg-slate-50 border-slate-100" };
 
 export default function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -49,6 +54,11 @@ export default function NotificationBell() {
       setOpen(true);
       await fetch("/api/notifications/read", { method: "POST" });
     } catch { /* silent */ }
+  };
+
+  const clearAll = async () => {
+    await fetch("/api/notifications", { method: "DELETE" });
+    setNotifications([]);
   };
 
   useEffect(() => {
@@ -105,7 +115,7 @@ export default function NotificationBell() {
         </AnimatePresence>
       </button>
 
-      {/* Dropdown panel */}
+          {/* Dropdown panel */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -114,32 +124,43 @@ export default function NotificationBell() {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="absolute right-0 mt-2 w-[22rem] card-elevated z-50 overflow-hidden origin-top-right"
+            className="absolute right-0 mt-2 w-[22rem] z-50 overflow-hidden origin-top-right
+              bg-white/80 backdrop-blur-xl border border-white/40 shadow-xl shadow-black/5 rounded-2xl"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[--color-border]">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100/80">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-[--color-fg]">Notifications</span>
-                {notifications.filter(n => !n.read).length > 0 && (
-                  <span className="badge bg-teal-50 text-teal-700 border-teal-200 font-bold">
-                    {notifications.filter(n => !n.read).length} new
+                <span className="text-sm font-semibold text-gray-900">Notifications</span>
+                {notifications.length > 0 && (
+                  <span className="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200/60 px-1.5 py-0.5 rounded-full">
+                    {notifications.length}
                   </span>
                 )}
               </div>
-              <button onClick={() => setOpen(false)} className="text-[--color-muted] hover:text-[--color-fg] p-1 rounded-lg hover:bg-[--color-surface-2] transition">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              <div className="flex items-center gap-1">
+                {notifications.length > 0 && (
+                  <button
+                    onClick={clearAll}
+                    className="text-xs text-gray-400 hover:text-red-500 px-2 py-1 rounded-lg hover:bg-white/60 transition mr-1"
+                  >
+                    Clear all
+                  </button>
+                )}
+                <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-white/60 transition">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {/* List */}
-            <div className="max-h-[22rem] overflow-y-auto divide-y divide-[--color-border]">
+            <div className="max-h-[22rem] overflow-y-auto divide-y divide-gray-100/60">
               {notifications.length === 0 ? (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex flex-col items-center justify-center py-12 gap-2 text-[--color-muted]"
+                  className="flex flex-col items-center justify-center py-12 gap-2 text-gray-400"
                 >
                   <span className="text-3xl">🔔</span>
                   <p className="text-sm">You&apos;re all caught up!</p>
@@ -147,6 +168,54 @@ export default function NotificationBell() {
               ) : (
                 notifications.map((n, i) => {
                   const meta = TYPE_META[n.type] ?? DEFAULT_META;
+                  const jobId = n.metadata?.jobId;
+
+                  const href = jobId
+                    ? `/jobs/${jobId}`
+                    : n.type === "COMPANY_APPROVED"
+                    ? "/company/dashboard"
+                    : n.type === "ACCOUNT_SUSPENDED"
+                    ? "/suspended"
+                    : n.type === "ACCOUNT_REACTIVATED"
+                    ? "/"
+                    : null;
+
+                  const content = (
+                    <>
+                      <span className={`w-8 h-8 shrink-0 rounded-xl border flex items-center justify-center text-base shadow-sm ${meta.color}`}>
+                        {meta.icon}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-700 leading-snug">{n.message}</p>
+                        <p className="text-xs text-gray-400 mt-1">{formatTime(n.createdAt)}</p>
+                      </div>
+                      {!n.read && (
+                        <span className="w-2 h-2 rounded-full bg-teal-500 shrink-0 mt-1.5 ring-2 ring-teal-100" />
+                      )}
+                    </>
+                  );
+
+                  if (href) {
+                    return (
+                      <motion.a
+                        key={n._id}
+                        variants={staggerItemVariants}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ delay: i * 0.04 }}
+                        href={href}
+                        onClick={() => {
+                          fetch(`/api/notifications?id=${n._id}`, { method: "DELETE" });
+                        }}
+                        className={`px-4 py-3 flex gap-3 cursor-pointer transition-colors no-underline ${
+                          !n.read ? "bg-teal-50/40" : ""
+                        } hover:bg-white/60`}
+                      >
+                        {content}
+                      </motion.a>
+                    );
+                  }
+
                   return (
                     <motion.div
                       key={n._id}
@@ -154,18 +223,15 @@ export default function NotificationBell() {
                       initial="hidden"
                       animate="visible"
                       transition={{ delay: i * 0.04 }}
-                      className={`px-4 py-3 flex gap-3 hover:bg-[--color-surface-2] transition-colors ${!n.read ? "bg-teal-50/60" : ""}`}
+                      onClick={() => {
+                        fetch(`/api/notifications?id=${n._id}`, { method: "DELETE" });
+                        setNotifications((prev) => prev.filter((item) => item._id !== n._id));
+                      }}
+                      className={`px-4 py-3 flex gap-3 cursor-pointer transition-colors ${
+                        !n.read ? "bg-teal-50/40" : ""
+                      } hover:bg-white/60`}
                     >
-                      <span className={`w-8 h-8 shrink-0 rounded-lg border flex items-center justify-center text-base ${meta.color}`}>
-                        {meta.icon}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-[--color-fg-2] leading-snug">{n.message}</p>
-                        <p className="text-xs text-[--color-muted] mt-1">{formatTime(n.createdAt)}</p>
-                      </div>
-                      {!n.read && (
-                        <span className="w-2 h-2 rounded-full bg-teal-500 shrink-0 mt-1.5" />
-                      )}
+                      {content}
                     </motion.div>
                   );
                 })

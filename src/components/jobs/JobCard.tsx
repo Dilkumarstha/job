@@ -54,6 +54,7 @@ export default function JobCard({
   companyName = "Company",
   score,
   isSaved: initialSaved = false,
+  isApplied = false,
   showActions = true,
 }: JobCardProps) {
   const [saved, setSaved] = useState(initialSaved);
@@ -171,12 +172,21 @@ export default function JobCard({
         <div className="flex items-center gap-2">
           {!isExpired ? (
             <>
-              <Link
-                href={`/jobs/${job._id}`}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-xs transition-colors whitespace-nowrap"
-              >
-                Apply Now
-              </Link>
+              {isApplied ? (
+                <span className="inline-flex items-center gap-1.5 bg-teal-50 text-teal-700 text-xs font-bold px-4 py-2.5 rounded-xl border border-teal-200 whitespace-nowrap">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                  Applied
+                </span>
+              ) : (
+                <Link
+                  href={`/jobs/${job._id}`}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-xs transition-colors whitespace-nowrap"
+                >
+                  Apply Now
+                </Link>
+              )}
               {showActions && (
                 <button
                   onClick={handleSave}

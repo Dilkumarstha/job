@@ -1,5 +1,7 @@
 "use client";
 
+"use client";
+
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -10,6 +12,7 @@ import {
 import JobCard from "@/components/jobs/JobCard";
 import EmptyState from "@/components/ui/EmptyState";
 import TopSearchBar from "@/components/jobs/TopSearchBar";
+import FollowCompanyMini from "@/components/companies/FollowCompanyMini";
 
 interface ScoredJob {
   job: any;
@@ -31,7 +34,9 @@ interface HomePageClientProps {
   jobsCount: number;
   companyNameMap: Record<string, string>;
   savedJobIds: string[];
+  appliedJobIds?: string[];
   session: any;
+  followedCompanyIds?: string[];
 }
 
 export default function HomePageClient({
@@ -41,9 +46,12 @@ export default function HomePageClient({
   jobsCount,
   companyNameMap,
   savedJobIds,
+  appliedJobIds = [],
   session,
+  followedCompanyIds = [],
 }: HomePageClientProps) {
   const savedJobIdSet = new Set(savedJobIds);
+  const appliedJobIdSet = new Set(appliedJobIds);
 
   if (isSeeker) {
     return (
@@ -104,38 +112,47 @@ export default function HomePageClient({
                     initial={{ opacity: 0, x: 16 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.35, delay: 0.18 + i * 0.05 }}
+                    className="shrink-0"
                   >
-                    <Link
-                      href={`/companies/${company.id}`}
-                      className="card card-hover shrink-0 flex items-center gap-3 px-5 py-4 min-w-[200px] max-w-[220px] group"
-                    >
-                      <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center text-sm font-bold text-teal-600 shrink-0">
-                        {company.logoUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={company.logoUrl}
-                            alt={company.companyName}
-                            className="w-full h-full object-cover rounded-xl"
-                          />
-                        ) : (
-                          company.companyName.charAt(0).toUpperCase()
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-[--color-fg] group-hover:text-teal-600 transition-colors truncate leading-tight">
-                          {company.companyName}
-                        </p>
-                        {company.industry && (
-                          <p className="text-[0.7rem] text-[--color-subtle] truncate mt-0.5">
-                            {company.industry}
+                    <div className="card shrink-0 min-w-[200px] max-w-[220px]">
+                      <Link
+                        href={`/companies/${company.id}`}
+                        className="flex items-center gap-3 px-5 pt-4 pb-2 group"
+                      >
+                        <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center text-sm font-bold text-teal-600 shrink-0">
+                          {company.logoUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={company.logoUrl}
+                              alt={company.companyName}
+                              className="w-full h-full object-cover rounded-xl"
+                            />
+                          ) : (
+                            company.companyName.charAt(0).toUpperCase()
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-[--color-fg] group-hover:text-teal-600 transition-colors truncate leading-tight">
+                            {company.companyName}
                           </p>
-                        )}
-                        <p className="text-[0.7rem] font-semibold text-teal-600 mt-1">
+                          {company.industry && (
+                            <p className="text-[0.7rem] text-[--color-subtle] truncate mt-0.5">
+                              {company.industry}
+                            </p>
+                          )}
+                        </div>
+                      </Link>
+                      <div className="px-5 pb-4 flex items-center justify-between">
+                        <p className="text-[0.7rem] font-semibold text-teal-600">
                           {company.jobCount} open{" "}
                           {company.jobCount === 1 ? "role" : "roles"}
                         </p>
+                        <FollowCompanyMini
+                          companyId={company.id}
+                          initialFollowing={followedCompanyIds.includes(company.id)}
+                        />
                       </div>
-                    </Link>
+                    </div>
                   </motion.div>
                 ))}
               </div>
@@ -184,6 +201,7 @@ export default function HomePageClient({
                       companyName={companyNameMap[job.companyId.toString()]}
                       score={score}
                       isSaved={savedJobIdSet.has(job._id.toString())}
+                      isApplied={appliedJobIdSet.has(job._id.toString())}
                       showActions
                     />
                   </AnimatedGridItem>

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getActiveJobs } from "@/actions/jobs";
 import { connectDB } from "@/lib/db";
 import CompanyProfile from "@/models/CompanyProfile";
+import Application from "@/models/Application";
 import { JOB_CATEGORIES, EXPERIENCE_LEVELS, JOB_TYPES } from "@/lib/constants";
 import JobCard from "@/components/jobs/JobCard";
 import EmptyState from "@/components/ui/EmptyState";
@@ -31,7 +32,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
 
   await connectDB();
-  const [jobs, companyProfiles] = await Promise.all([
+
+  const isSeeker = session.user.role === "JOBSEEKER";
+
+  const [jobs, companyProfiles, appliedJobIds] = await Promise.all([
     getActiveJobs({
       q: params.q,
       location: params.location,
@@ -43,7 +47,12 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       sortBy: params.sortBy === "deadline" ? "deadline" : "latest",
     }),
     CompanyProfile.find().select("userId companyName").lean(),
+    isSeeker
+      ? Application.find({ seekerId: session.user.id }).select("jobId").lean()
+      : Promise.resolve([]),
   ]);
+
+  const appliedSet = new Set(appliedJobIds.map((a: { jobId: { toString: () => string } }) => a.jobId.toString()));
 
   const companyNameMap = new Map(
     companyProfiles.map((c) => [c.userId.toString(), c.companyName])
@@ -106,7 +115,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                       companyId: job.companyId.toString(),
                     }}
                     companyName={companyNameMap.get(job.companyId.toString())}
-                    showActions={session.user.role === "JOBSEEKER"}
+                    isApplied={appliedSet.has(job._id.toString())}
+                    showActions={isSeeker}
                   />
                 </AnimatedGridItem>
               ))}

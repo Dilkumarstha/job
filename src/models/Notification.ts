@@ -13,6 +13,11 @@ export interface INotification extends Document {
   type: NotificationType;
   message: string;
   read: boolean;
+  metadata?: {
+    jobId?: string;
+    jobTitle?: string;
+    companyName?: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -43,6 +48,10 @@ const NotificationSchema = new Schema<INotification>(
     read: {
       type: Boolean,
       default: false,
+    },
+    metadata: {
+      type: Schema.Types.Mixed,
+      default: undefined,
     },
   },
   {

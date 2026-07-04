@@ -1,0 +1,80 @@
+@startuml
+title HireHub — Activity Diagram\n(User Registration to Job Application)
+
+start
+
+:User visits HireHub;
+:Chooses role;
+
+if (Role?) then (Job Seeker)
+  :Fill registration form\n(name, email, password);
+  :Submit signup;
+  :User created (ACTIVE);
+  :SeekerProfile created;
+  :Redirect to login;
+  :Log in;
+  :Redirect to seeker feed;
+
+else (Company)
+  :Fill registration form\n(company name, email, password);
+  :Submit signup;
+  :User created (PENDING_APPROVAL);
+  :CompanyProfile created;
+  :Redirect to login with\npending approval message;
+  :Log in;
+  :See pending banner;
+  :Wait for admin approval;
+
+  if (Admin approves?) then (Yes)
+    :Company status set to ACTIVE;
+    :Notification sent;
+    :Post jobs;
+  else (Rejected)
+    :Company status set to SUSPENDED;
+    :Notification sent;
+    :End;
+  endif;
+endif;
+
+:View personalized job feed\nsorted by match score;
+:Search jobs with filters;
+
+repeat
+  :Browse job cards;
+  :View job details;
+
+  if (Already applied?) then (Yes)
+    :Show Applied badge;
+  else (No)
+    :Click Apply Now;
+    :Fill cover letter and phone;
+    :Submit application;
+    :Application created with\nPENDING status;
+    :Show Applied badge;
+    :Company reviews application;
+
+    if (Company action?) then (Approved)
+      :Status changed to APPROVED;
+      :Notification sent to seeker;
+    else (Rejected)
+      :Status changed to REJECTED;
+      :Notification sent to seeker;
+    endif;
+  endif;
+
+  if (Save job?) then (Yes)
+    :Toggle save;
+    :SavedJob created or deleted;
+  endif;
+
+  if (Follow company?) then (Yes)
+    :Toggle follow;
+    :CompanyFollow created or deleted;
+  endif;
+
+repeat while (Continue browsing?) is (Yes)
+
+:View My Applications page\nto track all statuses;
+
+stop
+@enduml

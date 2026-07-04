@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
@@ -9,7 +10,11 @@ export type NavRole = "JOBSEEKER" | "COMPANY" | "SUPERADMIN" | null;
 
 interface NavbarProps {
   role: NavRole;
-  signOutSlot: React.ReactNode; // server-rendered sign-out form passed as a slot
+  signOutSlot: React.ReactNode;
+  displayName: string;
+  avatarUrl: string;
+  initials: string;
+  profileHref: string;
 }
 
 const NAV_LINKS: Record<string, { href: string; label: string }[]> = {
@@ -18,6 +23,7 @@ const NAV_LINKS: Record<string, { href: string; label: string }[]> = {
     { href: "/seeker/search", label: "Search" },
     { href: "/seeker/applications", label: "My Applications" },
     { href: "/seeker/saved", label: "Saved Jobs" },
+    { href: "/seeker/following", label: "Following" },
     { href: "/seeker/profile", label: "Profile" },
   ],
   COMPANY: [
@@ -39,11 +45,23 @@ const HOME_HREF: Record<string, string> = {
   SUPERADMIN: "/admin/dashboard",
 };
 
-export default function Navbar({ role, signOutSlot }: NavbarProps) {
+export default function Navbar({ role, signOutSlot, displayName, avatarUrl, initials, profileHref }: NavbarProps) {
   const pathname = usePathname();
   const links = role ? (NAV_LINKS[role] ?? []) : [];
   const homeHref = role ? (HOME_HREF[role] ?? "/") : "/";
   const isAdmin = role === "SUPERADMIN";
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -106,7 +124,42 @@ export default function Navbar({ role, signOutSlot }: NavbarProps) {
             <>
               <NotificationBell />
               <div className="w-px h-5 bg-[--color-border] mx-1" />
-              {signOutSlot}
+              {/* Profile avatar dropdown */}
+              <div className="relative" ref={menuRef}>
+                <button
+                  onClick={() => setMenuOpen((p) => !p)}
+                  className="w-8 h-8 rounded-full overflow-hidden border-2 border-[--color-border] hover:border-teal-500 transition-colors flex items-center justify-center bg-teal-100 text-teal-700 text-xs font-bold shrink-0"
+                >
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    initials
+                  )}
+                </button>
+                {menuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -4, scale: 0.96 }}
+                    transition={{ duration: 0.15, ease: "easeOut" }}
+                    className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50"
+                  >
+                    <div className="px-4 py-2 text-sm font-medium text-gray-900 truncate border-b border-gray-50">
+                      {displayName}
+                    </div>
+                    <Link
+                      href={profileHref}
+                      onClick={() => setMenuOpen(false)}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                      Profile
+                    </Link>
+                    <div className="border-t border-gray-50 mt-1 pt-1">
+                      {signOutSlot}
+                    </div>
+                  </motion.div>
+                )}
+              </div>
             </>
           ) : (
             <>

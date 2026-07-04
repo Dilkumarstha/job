@@ -1,0 +1,81 @@
+@startuml
+title HireHub — Sequence Diagram\n(Job Application Lifecycle)
+
+actor "Job Seeker" as Seeker
+actor "Company" as Company
+actor "Admin" as Admin
+participant "Browser" as UI
+participant "Next.js\nServer" as Server
+database "MongoDB" as DB
+
+== 1. COMPANY REGISTRATION & APPROVAL ==
+
+Company -> UI: Sign up
+UI -> Server: signupCompany(form)
+Server -> DB: User.create(role=COMPANY, status=PENDING_APPROVAL)
+Server -> DB: CompanyProfile.create()
+Server --> UI: redirect /login?message=pending-approval
+
+Admin -> UI: Log in
+UI -> Server: signIn(credentials)
+Server -> DB: User.find(email)
+Server --> UI: JWT token + redirect /admin/dashboard
+Admin -> UI: Approve company
+UI -> Server: approveCompany(companyId)
+Server -> DB: User.update(status=ACTIVE)
+Server -> DB: CompanyProfile.update(verified=true)
+Server -> DB: Notification.create(type=COMPANY_APPROVED)
+Server --> UI: ok
+
+== 2. JOB POSTING ==
+
+Company -> UI: Post new job
+UI -> Server: createJob(formData)
+Server -> DB: Job.create(status=ACTIVE)
+Server -> DB: CompanyFollow.find(followers)
+Server -> DB: Notification.create(type=NEW_JOB_POSTED)
+Server --> UI: redirect /company/jobs
+
+== 3. SEEKER APPLIES ==
+
+Seeker -> UI: Browse feed
+UI -> Server: GET /
+Server -> DB: Job.find(ACTIVE)
+Server -> DB: SeekerProfile.find()
+Server -> DB: SavedJob.find()
+Server -> DB: Application.find()
+Server --> UI: scoredJobs + savedJobIds + appliedJobIds
+
+Seeker -> UI: Click job → View details
+UI -> Server: GET /jobs/[jobId]
+Server -> DB: Job.findById()
+Server -> DB: Application.findOne({jobId, seekerId})
+Server --> UI: Job details + applicationStatus
+
+Seeker -> UI: Click "Apply Now"
+UI -> Server: applyToJob(jobId, formData)
+Server -> DB: Application.create(status=PENDING)
+Server --> UI: { ok: true }
+UI -> UI: Show "Applied" badge
+
+== 4. COMPANY REVIEWS ==
+
+Company -> UI: View applicants
+UI -> Server: GET /company/jobs/[jobId]/applicants
+Server -> DB: Application.find({jobId})
+Server -> DB: SeekerProfile.find() + matchScore()
+Server --> UI: Applicants sorted by match score
+
+Company -> UI: Approve applicant
+UI -> Server: reviewApplicant(appId, formData)
+Server -> DB: Application.update(status=APPROVED)
+Server -> DB: Notification.create(type=APPLICATION_STATUS_CHANGED)
+Server --> UI: { ok: true }
+
+== 5. NOTIFICATION POLLING ==
+
+UI -> Server: fetch /api/notifications (every 30s)
+Server -> DB: Notification.find({userId, read:false})
+Server --> UI: { count, notifications }
+
+@enduml

@@ -30,7 +30,7 @@ function Section({
   delay = 0,
 }: {
   title: string;
-  icon: string;
+  icon?: string;
   children: React.ReactNode;
   delay?: number;
 }) {
@@ -42,7 +42,7 @@ function Section({
       className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm"
     >
       <div className="flex items-center gap-2 mb-5 pb-4 border-b border-gray-50">
-        <span className="text-lg">{icon}</span>
+        {icon && <span className="text-lg">{icon}</span>}
         <h2 className="text-sm font-semibold text-gray-800">{title}</h2>
       </div>
       {children}

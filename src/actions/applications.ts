@@ -46,10 +46,12 @@ export async function reviewApplicant(applicationId: string, formData: FormData)
       ? "rejected ❌"
       : "reviewed";
 
+  const popJob = application.jobId as unknown as { _id: { toString: () => string }; title: string };
   await createNotification(
     (application.seekerId as unknown as string).toString(),
     "APPLICATION_STATUS_CHANGED",
-    `Your application for "${job.title}" has been ${statusLabel}. Message: ${result.data.message}`
+    `Your application for "${job.title}" has been ${statusLabel}. Message: ${result.data.message}`,
+    { jobId: popJob._id.toString(), jobTitle: job.title }
   );
 
   revalidatePath(`/company/jobs/${job.companyId}/applicants`);

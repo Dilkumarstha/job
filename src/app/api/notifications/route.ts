@@ -28,3 +28,23 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({ notifications, count });
 }
+
+export async function DELETE(request: NextRequest) {
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized", code: "UNAUTHORIZED" }, { status: 401 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+
+  await connectDB();
+
+  if (id) {
+    await Notification.deleteOne({ _id: id, userId: session.user.id });
+  } else {
+    await Notification.deleteMany({ userId: session.user.id });
+  }
+
+  return NextResponse.json({ ok: true });
+}

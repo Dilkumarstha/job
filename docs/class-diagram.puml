@@ -1,0 +1,177 @@
+@startuml
+title HireHub Class Diagram — Data Model
+
+skinparam class {
+  BackgroundColor #f0fdf4
+  BorderColor #0f766e
+  HeaderBackgroundColor #0f766e
+  HeaderFontColor white
+}
+
+enum UserRole {
+  SUPERADMIN
+  JOBSEEKER
+  COMPANY
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING_APPROVAL
+}
+
+enum ExperienceLevel {
+  ENTRY
+  JUNIOR
+  MID
+  SENIOR
+  LEAD
+}
+
+enum JobType {
+  REMOTE
+  ONSITE
+  HYBRID
+}
+
+enum JobStatus {
+  ACTIVE
+  EXPIRED
+  CLOSED
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  APPROVED
+  REJECTED
+}
+
+enum NotificationType {
+  APPLICATION_STATUS_CHANGED
+  NEW_JOB_POSTED
+  ACCOUNT_SUSPENDED
+  ACCOUNT_REACTIVATED
+  COMPANY_APPROVED
+  COMPANY_REJECTED
+}
+
+class User {
+  +email: String <<unique>>
+  +passwordHash: String
+  +role: UserRole
+  +status: UserStatus
+  +suspendedUntil: Date
+  +suspendedReason: String
+  +resetPasswordToken: String
+  +resetPasswordExpires: Date
+  +deletedAt: Date
+  +createdAt: Date
+  +updatedAt: Date
+}
+
+class SeekerProfile {
+  +userId: ObjectId <<FK>>
+  +fullName: String
+  +bio: String
+  +resumeUrl: String
+  +experienceLevel: ExperienceLevel
+  +location: String
+  +skills: String[]
+  +interests: String[]
+  +createdAt: Date
+  +updatedAt: Date
+}
+
+class CompanyProfile {
+  +userId: ObjectId <<FK>>
+  +companyName: String
+  +description: String
+  +logoUrl: String
+  +industry: String
+  +website: String
+  +verified: Boolean
+  +createdAt: Date
+  +updatedAt: Date
+}
+
+class Job {
+  +companyId: ObjectId <<FK>>
+  +title: String
+  +description: String
+  +category: String
+  +skillsRequired: String[]
+  +experienceLevel: ExperienceLevel
+  +salaryMin: Number
+  +salaryMax: Number
+  +location: String
+  +jobType: JobType
+  +deadline: Date
+  +status: JobStatus
+  +createdAt: Date
+  +updatedAt: Date
+}
+
+class Application {
+  +jobId: ObjectId <<FK>>
+  +seekerId: ObjectId <<FK>>
+  +status: ApplicationStatus
+  +message: String
+  +coverLetter: String
+  +phone: String
+  +resumeUrl: String
+  +appliedAt: Date
+  +updatedAt: Date
+  <<unique(jobId, seekerId)>>
+}
+
+class SavedJob {
+  +seekerId: ObjectId <<FK>>
+  +jobId: ObjectId <<FK>>
+  +createdAt: Date
+  <<unique(seekerId, jobId)>>
+}
+
+class CompanyFollow {
+  +seekerId: ObjectId <<FK>>
+  +companyId: ObjectId <<FK>>
+  +createdAt: Date
+  <<unique(seekerId, companyId)>>
+}
+
+class Notification {
+  +userId: ObjectId <<FK>>
+  +type: NotificationType
+  +message: String
+  +read: Boolean
+  +metadata: Object
+  +createdAt: Date
+  +updatedAt: Date
+}
+
+class AuditLog {
+  +adminId: ObjectId <<FK>>
+  +action: String
+  +targetUserId: ObjectId
+  +reason: String
+  +metadata: Object
+  +createdAt: Date
+  +updatedAt: Date
+}
+
+' === RELATIONSHIPS ===
+
+User "1" -- "1" SeekerProfile : has profile
+User "1" -- "1" CompanyProfile : has profile
+User "1" -- "0..*" Job : posts
+Job "1" -- "0..*" Application : receives
+User "1" -- "0..*" Application : submits
+User "1" -- "0..*" SavedJob : saves
+Job "1" -- "0..*" SavedJob : saved by
+User "1" -- "0..*" CompanyFollow : follows
+User "1" -- "0..*" CompanyFollow : followed by
+User "1" -- "0..*" Notification : receives
+User "1" -- "0..*" AuditLog : performs
+User "1" -- "0..*" AuditLog : targets
+
+@enduml

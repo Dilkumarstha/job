@@ -10,6 +10,8 @@ export interface IUser extends Document {
   status: UserStatus;
   suspendedUntil: Date | null;
   suspendedReason: string | null;
+  resetPasswordToken: string | null;
+  resetPasswordExpires: Date | null;
   deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -44,6 +46,14 @@ const UserSchema = new Schema<IUser>(
     },
     suspendedReason: {
       type: String,
+      default: null,
+    },
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+    resetPasswordExpires: {
+      type: Date,
       default: null,
     },
     deletedAt: {

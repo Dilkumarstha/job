@@ -6,6 +6,7 @@ import CompanyFollow from "@/models/CompanyFollow";
 import User from "@/models/User";
 import Job from "@/models/Job";
 import SavedJob from "@/models/SavedJob";
+import Application from "@/models/Application";
 import { getActiveJobs } from "@/actions/jobs";
 import { matchScore } from "@/lib/matchScore";
 import HomePageClient from "./HomePageClient";
@@ -24,6 +25,12 @@ export default async function HomePage() {
     ]);
 
   const hiringCompanyIds = activeCompanyAgg.map((a) => a._id.toString());
+
+  let followedCompanyIds = new Set<string>();
+  if (session?.user?.role === "JOBSEEKER") {
+    const follows = await CompanyFollow.find({ seekerId: session.user.id }).lean();
+    followedCompanyIds = new Set(follows.map((f) => f.companyId.toString()));
+  }
 
   const [jobs, companyProfiles, hiringUsers] = await Promise.all([
     getActiveJobs(),
@@ -59,13 +66,16 @@ export default async function HomePage() {
     companyProfiles.map((c) => [c.userId.toString(), c.companyName]),
   );
 
-  // Check which jobs the current seeker has saved
+  // Check which jobs the current seeker has saved / applied
   const savedJobIds = new Set<string>();
+  const appliedJobIds = new Set<string>();
   if (session?.user?.role === "JOBSEEKER") {
-    const saved = await SavedJob.find({ seekerId: session.user.id })
-      .select("jobId")
-      .lean();
+    const [saved, applied] = await Promise.all([
+      SavedJob.find({ seekerId: session.user.id }).select("jobId").lean(),
+      Application.find({ seekerId: session.user.id }).select("jobId").lean(),
+    ]);
     saved.forEach((s) => savedJobIds.add(s.jobId.toString()));
+    applied.forEach((a) => appliedJobIds.add(a.jobId.toString()));
   }
 
   // If user is logged in as a seeker, we compute personalized match scores
@@ -127,7 +137,9 @@ export default async function HomePage() {
       jobsCount={jobs.length}
       companyNameMap={companyNameMapObj}
       savedJobIds={[...savedJobIds]}
+      appliedJobIds={[...appliedJobIds]}
       session={session}
+      followedCompanyIds={[...followedCompanyIds]}
     />
   );
 }

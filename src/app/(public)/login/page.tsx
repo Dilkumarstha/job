@@ -111,6 +111,19 @@ function LoginForm() {
               </div>
             </motion.div>
           )}
+          {message === "password-reset" && (
+            <motion.div
+              key="password-reset"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden mb-4"
+            >
+              <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                Password reset successful! Sign in with your new password.
+              </div>
+            </motion.div>
+          )}
           {error === "unauthorized" && (
             <motion.div
               key="unauthorized"
@@ -180,6 +193,15 @@ function LoginForm() {
                 {errors.password.message}
               </p>
             )}
+          </div>
+
+          <div className="text-right -mt-3">
+            <Link
+              href="/forgot-password"
+              className="text-sm text-teal-700 hover:underline"
+            >
+              Forgot password?
+            </Link>
           </div>
 
           {/* Submit button with tap scale */}
