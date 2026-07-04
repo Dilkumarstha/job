@@ -1,0 +1,136 @@
+@startuml
+title HireHub — Entity Relationship Diagram
+
+entity User {
+  *email: String <<PK>>
+  --
+  *passwordHash: String
+  *role: UserRole
+  *status: UserStatus
+  suspendedUntil: Date
+  suspendedReason: String
+  resetPasswordToken: String
+  resetPasswordExpires: Date
+  deletedAt: Date
+  createdAt: Date
+  updatedAt: Date
+}
+
+entity SeekerProfile {
+  *userId: ObjectId <<FK>>
+  --
+  *fullName: String
+  bio: String
+  resumeUrl: String
+  experienceLevel: ExperienceLevel
+  location: String
+  skills: String[]
+  interests: String[]
+  createdAt: Date
+  updatedAt: Date
+}
+
+entity CompanyProfile {
+  *userId: ObjectId <<FK>>
+  --
+  *companyName: String
+  description: String
+  logoUrl: String
+  industry: String
+  website: String
+  *verified: Boolean
+  createdAt: Date
+  updatedAt: Date
+}
+
+entity Job {
+  *id: ObjectId <<PK>>
+  --
+  *companyId: ObjectId <<FK>>
+  *title: String
+  *description: String
+  *category: String
+  skillsRequired: String[]
+  *experienceLevel: ExperienceLevel
+  salaryMin: Number
+  salaryMax: Number
+  *location: String
+  *jobType: JobType
+  *deadline: Date
+  *status: JobStatus
+  createdAt: Date
+  updatedAt: Date
+}
+
+entity Application {
+  *id: ObjectId <<PK>>
+  --
+  *jobId: ObjectId <<FK>>
+  *seekerId: ObjectId <<FK>>
+  *status: ApplicationStatus
+  message: String
+  coverLetter: String
+  phone: String
+  resumeUrl: String
+  appliedAt: Date
+  updatedAt: Date
+  <<unique(jobId, seekerId)>>
+}
+
+entity SavedJob {
+  *seekerId: ObjectId <<FK>>
+  *jobId: ObjectId <<FK>>
+  --
+  createdAt: Date
+  <<unique(seekerId, jobId)>>
+}
+
+entity CompanyFollow {
+  *seekerId: ObjectId <<FK>>
+  *companyId: ObjectId <<FK>>
+  --
+  createdAt: Date
+  <<unique(seekerId, companyId)>>
+}
+
+entity Notification {
+  *id: ObjectId <<PK>>
+  --
+  *userId: ObjectId <<FK>>
+  *type: NotificationType
+  *message: String
+  *read: Boolean
+  metadata: Object
+  createdAt: Date
+  updatedAt: Date
+}
+
+entity AuditLog {
+  *id: ObjectId <<PK>>
+  --
+  *adminId: ObjectId <<FK>>
+  *action: String
+  targetUserId: ObjectId
+  reason: String
+  metadata: Object
+  createdAt: Date
+  updatedAt: Date
+}
+
+' === RELATIONSHIPS ===
+
+User ||--|| SeekerProfile : "has"
+User ||--|| CompanyProfile : "has"
+User ||--o{ Job : "posts"
+User ||--o{ Application : "submits"
+User ||--o{ SavedJob : "saves"
+User ||--o{ CompanyFollow : "follows"
+User ||--o{ CompanyFollow : "followed by"
+User ||--o{ Notification : "receives"
+User ||--o{ AuditLog : "performs"
+User ||--o{ AuditLog : "targets"
+
+Job ||--o{ Application : "has"
+Job ||--o{ SavedJob : "saved in"
+
+@enduml

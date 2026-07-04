@@ -1,214 +1,223 @@
-import { getAdminStats } from "@/actions/admin";
+import { getAdminStats, getApplicationsOverTime, getWeeklySignups, getJobsByCategory, getCompanyStatusCounts, getRecentActivityFeed, getRecentCompanies } from "@/actions/admin";
+import { CalendarDays } from "lucide-react";
+import { AnimatedSection, AnimatedGrid, AnimatedGridItem } from "@/components/ui/AnimatedSection";
+import StatCard from "@/components/admin/StatCard";
+import DashboardSearchBar from "@/components/admin/DashboardSearchBar";
+import RecentActivity from "@/components/admin/RecentActivity";
+import RecentCompaniesTable from "@/components/admin/RecentCompaniesTable";
 import {
-  AnimatedSection,
-  AnimatedGrid,
-  AnimatedGridItem,
-} from "@/components/ui/AnimatedSection";
+  ApplicationsLineChart,
+  WeeklySignupsBarChart,
+  JobsByCategoryDoughnut,
+  CompanyStatusBarChart,
+} from "@/components/admin/DashboardCharts";
 
-import {
-  Users,
-  Building2,
-  Clock3,
-  Briefcase,
-  Archive,
-  FileText,
-  UserPlus,
-} from "lucide-react";
-
-export default async function AdminDashboard() {
-  const stats = await getAdminStats();
-
-  if ("error" in stats) {
-    return <p className="text-red-500">{stats.error}</p>;
-  }
-
-  // const cards = [
-  //   { label: "Job Seekers", value: stats.totalSeekers,
-  //     // icon: "👤",
-  //     color: "teal" },
-  //   { label: "Active Companies", value: stats.totalCompaniesActive,
-  //     // icon: "🏢",
-  //     color: "green" },
-  //   { label: "Pending Companies", value: stats.totalCompaniesPending,
-  //     // icon: "⏳",
-  //     color: "amber" },
-  //   { label: "Active Jobs", value: stats.totalJobsActive,
-  //     // icon: "💼",
-  //     color: "blue" },
-  //   { label: "Expired Jobs", value: stats.totalJobsExpired,
-  //     // icon: "📋",
-  //     color: "gray" },
-  //   { label: "Total Applications", value: stats.totalApplications,
-  //     // icon: "📨",
-  //     color: "purple" },
-  //   { label: "Signups (7 days)", value: stats.recentSignups,
-  //     // icon: "🆕",
-  //     color: "teal" },
-  // ];
-
-  const cards = [
+// ─── card definitions ────────────────────────────────────────────────────────
+// icon is a plain string key — safe to pass to Client Components
+function buildCards(stats: {
+  totalSeekers: number;
+  totalCompaniesActive: number;
+  totalCompaniesPending: number;
+  totalJobsActive: number;
+  totalJobsExpired: number;
+  totalApplications: number;
+  recentSignups: number;
+}) {
+  return [
     {
       label: "Job Seekers",
       value: stats.totalSeekers,
-      icon: Users,
-      color: "teal",
       description: "Registered users",
+      icon: "Users",
+      iconBg: "bg-teal-50",
+      iconColor: "text-teal-600",
+      barColor: "bg-teal-500",
+      barPct: 72,
+      trend: "+8% this week",
     },
     {
       label: "Active Companies",
       value: stats.totalCompaniesActive,
-      icon: Building2,
-      color: "green",
       description: "Verified employers",
+      icon: "Building2",
+      iconBg: "bg-emerald-50",
+      iconColor: "text-emerald-600",
+      barColor: "bg-emerald-500",
+      barPct: 85,
+      trend: "+3 this month",
     },
     {
       label: "Pending Companies",
       value: stats.totalCompaniesPending,
-      icon: Clock3,
-      color: "amber",
       description: "Awaiting approval",
+      icon: "Clock3",
+      iconBg: "bg-amber-50",
+      iconColor: "text-amber-600",
+      barColor: "bg-amber-400",
+      barPct: 35,
     },
     {
       label: "Active Jobs",
       value: stats.totalJobsActive,
-      icon: Briefcase,
-      color: "blue",
       description: "Currently hiring",
+      icon: "Briefcase",
+      iconBg: "bg-blue-50",
+      iconColor: "text-blue-600",
+      barColor: "bg-blue-500",
+      barPct: 60,
+      trend: "+12 this week",
     },
     {
       label: "Expired Jobs",
       value: stats.totalJobsExpired,
-      icon: Archive,
-      color: "gray",
       description: "No longer active",
+      icon: "Archive",
+      iconBg: "bg-gray-100",
+      iconColor: "text-gray-500",
+      barColor: "bg-gray-400",
+      barPct: 45,
     },
     {
-      label: "Applications",
+      label: "Total Applications",
       value: stats.totalApplications,
-      icon: FileText,
-      color: "purple",
-      description: "Total received",
+      description: "All time",
+      icon: "FileText",
+      iconBg: "bg-purple-50",
+      iconColor: "text-purple-600",
+      barColor: "bg-purple-500",
+      barPct: 78,
+      trend: "+24 this week",
     },
     {
       label: "New Signups",
       value: stats.recentSignups,
-      icon: UserPlus,
-      color: "teal",
       description: "Last 7 days",
+      icon: "UserPlus",
+      iconBg: "bg-teal-50",
+      iconColor: "text-teal-600",
+      barColor: "bg-teal-400",
+      barPct: 55,
+      trend: "vs prev. week",
     },
   ];
+}
 
-  // const colorMap: Record<string, string> = {
-  //   green: "border-green-200 bg-green-50",
-  //   amber: "border-amber-200 bg-amber-50",
-  //   blue: "border-blue-200 bg-blue-50",
-  //   gray: "border-gray-200 bg-gray-50",
-  //   purple: "border-purple-200 bg-purple-50",
-  //   teal: "border-teal-200 bg-teal-50",
-  // };
+export default async function AdminDashboard() {
+  const [
+    stats,
+    appOverTime,
+    weeklySignups,
+    jobsByCategory,
+    companyStatus,
+    activityFeed,
+    recentCompanies,
+  ] = await Promise.all([
+    getAdminStats(),
+    getApplicationsOverTime(),
+    getWeeklySignups(),
+    getJobsByCategory(),
+    getCompanyStatusCounts(),
+    getRecentActivityFeed(6),
+    getRecentCompanies(5),
+  ]);
 
-  const colorMap: Record<string, { bg: string; icon: string }> = {
-    green: {
-      bg: "bg-green-50",
-      icon: "bg-green-100 text-green-600",
-    },
-    amber: {
-      bg: "bg-amber-50",
-      icon: "bg-amber-100 text-amber-600",
-    },
-    blue: {
-      bg: "bg-blue-50",
-      icon: "bg-blue-100 text-blue-600",
-    },
-    purple: {
-      bg: "bg-purple-50",
-      icon: "bg-purple-100 text-purple-600",
-    },
-    teal: {
-      bg: "bg-teal-50",
-      icon: "bg-teal-100 text-teal-600",
-    },
-    gray: {
-      bg: "bg-gray-50",
-      icon: "bg-gray-100 text-gray-600",
-    },
-  };
+  if ("error" in stats) {
+    return (
+      <div className="rounded-xl bg-red-50 border border-red-200 p-4 text-red-600 text-sm">
+        {stats.error}
+      </div>
+    );
+  }
+
+  const cards = buildCards(stats);
+
+  const today = new Date().toLocaleDateString("en-US", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
+
+  // Safely extract chart data (guard against auth errors)
+  const lineData = "error" in appOverTime
+    ? { labels: [], applied: [], accepted: [], rejected: [] }
+    : appOverTime;
+
+  const weekData = "error" in weeklySignups
+    ? { labels: [], counts: [] }
+    : weeklySignups;
+
+  const catData = "error" in jobsByCategory
+    ? { labels: [], counts: [] }
+    : jobsByCategory;
+
+  const coStatus = "error" in companyStatus
+    ? { verified: 0, pending: 0, suspended: 0 }
+    : companyStatus;
+
+  const activity = Array.isArray(activityFeed) ? activityFeed : [];
+  const companies = Array.isArray(recentCompanies) ? recentCompanies : [];
 
   return (
-    <div>
-      {/* <AnimatedSection>
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Platform Overview</h1>
-      </AnimatedSection> */}
+    <div className="space-y-8">
 
+      {/* ── Header ── */}
       <AnimatedSection>
-        <div className="mb-8 flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              Admin Dashboard
-            </h1>
-            <p className="text-gray-500 mt-1">
-              Overview of your recruitment platform.
+            <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p className="text-sm text-gray-500 mt-0.5">
+              Overview of your recruitment platform
             </p>
           </div>
 
-          <div className="rounded-xl bg-white border px-4 py-2 shadow-sm">
-            <p className="text-xs text-gray-500">Today's Date</p>
-            <p className="font-semibold">{new Date().toLocaleDateString()}</p>
+          <div className="flex items-center gap-3 flex-wrap">
+            <DashboardSearchBar />
+
+            {/* date card */}
+            <div className="flex items-center gap-2 rounded-xl bg-white border border-gray-200 px-4 py-2 shadow-sm shrink-0">
+              <CalendarDays className="h-4 w-4 text-teal-500" />
+              <div suppressHydrationWarning>
+                <p className="text-xs text-gray-400 leading-none">Today</p>
+                <p className="text-xs font-semibold text-gray-700 mt-0.5" suppressHydrationWarning>
+                  {today}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </AnimatedSection>
 
-      {/* <AnimatedGrid className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {cards.map((c) => (
-          <AnimatedGridItem key={c.label}>
-            <div className={`rounded-xl border p-5 h-full ${colorMap[c.color] ?? "border-gray-200 bg-white"}`}>
-              <div className="text-2xl mb-2">{c.icon}</div>
-              <div className="text-3xl font-bold text-gray-900">{c.value}</div>
-              <div className="text-sm text-gray-600 mt-1">{c.label}</div>
-            </div>
+      {/* ── Stat Cards ── */}
+      <AnimatedGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {cards.map((card) => (
+          <AnimatedGridItem key={card.label}>
+            <StatCard {...card} />
           </AnimatedGridItem>
         ))}
-      </AnimatedGrid> */}
-
-      <AnimatedGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {cards.map((card) => {
-          const Icon = card.icon;
-          const colors = colorMap[card.color];
-
-          return (
-            <AnimatedGridItem key={card.label}>
-              <div
-                className={`group rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">{card.label}</p>
-
-                    <h2 className="mt-2 text-4xl font-bold text-gray-900">
-                      {card.value}
-                    </h2>
-
-                    <p className="mt-2 text-xs text-gray-500">
-                      {card.description}
-                    </p>
-                  </div>
-
-                  <div className={`rounded-xl p-3 ${colors.icon}`}>
-                    <Icon className="h-7 w-7" />
-                  </div>
-                </div>
-
-                <div className="mt-5 h-1 rounded-full bg-gray-100 overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${colors.bg}`}
-                    style={{ width: "70%" }}
-                  />
-                </div>
-              </div>
-            </AnimatedGridItem>
-          );
-        })}
       </AnimatedGrid>
+
+      {/* ── Charts row 1: Line + Bar ── */}
+      <AnimatedSection delay={0.1}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <ApplicationsLineChart {...lineData} />
+          <WeeklySignupsBarChart {...weekData} />
+        </div>
+      </AnimatedSection>
+
+      {/* ── Charts row 2: Doughnut + Horizontal Bar ── */}
+      <AnimatedSection delay={0.15}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <JobsByCategoryDoughnut {...catData} />
+          <CompanyStatusBarChart {...coStatus} />
+        </div>
+      </AnimatedSection>
+
+      {/* ── Bottom row: Activity + Companies table ── */}
+      <AnimatedSection delay={0.2}>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+          <RecentActivity items={activity} />
+          <RecentCompaniesTable companies={companies} />
+        </div>
+      </AnimatedSection>
+
     </div>
   );
 }

@@ -1,0 +1,147 @@
+@startuml HireHub Simple Component Diagram
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam componentStyle rectangle
+skinparam linetype ortho
+
+skinparam component {
+  BackgroundColor #EEF4FF
+  BorderColor #5B7FCC
+  FontColor #1A1A2E
+}
+
+skinparam package {
+  BackgroundColor #F8FAFF
+  BorderColor #8899CC
+  FontStyle bold
+}
+
+skinparam database {
+  BackgroundColor #E8F5E9
+  BorderColor #388E3C
+}
+
+skinparam cloud {
+  BackgroundColor #FFF3E0
+  BorderColor #E65100
+}
+
+title HireHub — Component Diagram
+
+' ─── External ───────────────────────────────────────────────
+database "MongoDB Atlas" as DB
+cloud "Resend\n(Email API)" as Email
+folder "public/uploads\n(File Storage)" as FS
+
+' ─── Main Packages ──────────────────────────────────────────
+
+package "Browser (Client)" {
+  [Public Pages\nLanding · Login · Signup\nJob Detail · Company Profile] as Public
+  [Seeker Dashboard\nFeed · Search · Saved\nApplications · Profile] as Seeker
+  [Company Dashboard\nJobs · Applicants · Profile] as CompanyUI
+  [Admin Panel\nDashboard · Users · Audit] as AdminUI
+}
+
+package "Next.js Server" {
+
+  package "Middleware" {
+    [proxy.ts\nRBAC Route Guard] as Proxy
+  }
+
+  package "API Routes" {
+    [/api/auth\n(NextAuth v5)] as AuthAPI
+    [/api/notifications] as NotifAPI
+    [/api/upload] as UploadAPI
+    [/api/company/profile] as CompAPI
+    [/api/health] as HealthAPI
+  }
+
+  package "Server Actions" {
+    [auth.ts\nsignup · login\nreset password] as ActAuth
+    [jobs.ts\ncreate · update · close\nget feed + applicants] as ActJobs
+    [applications.ts\napply · review] as ActApps
+    [seeker.ts\nprofile · save · follow] as ActSeeker
+    [admin.ts\napprove · suspend\ndelete · audit] as ActAdmin
+  }
+
+  package "Library (src/lib)" {
+    [auth.ts\nNextAuth Config + JWT] as LibAuth
+    [db.ts\nMongoose Connection] as LibDB
+    [matchScore.ts\nJob Ranking Algorithm] as LibMatch
+    [upload.ts\nFile Save Handler] as LibUpload
+    [notifications.ts\nCreate / Bulk Notify] as LibNotif
+    [email.ts\nPassword Reset Email] as LibEmail
+  }
+
+  package "Mongoose Models" {
+    [User] as MUser
+    [SeekerProfile\nCompanyProfile] as MProfile
+    [Job] as MJob
+    [Application] as MApp
+    [SavedJob · CompanyFollow] as MSocial
+    [Notification] as MNotif
+    [AuditLog] as MAudit
+  }
+}
+
+' ─── Connections ─────────────────────────────────────────────
+
+' Browser → Proxy → Pages
+Public  --> Proxy
+Seeker  --> Proxy
+CompanyUI --> Proxy
+AdminUI --> Proxy
+
+' Proxy enforces roles
+Proxy --> AuthAPI       : "/api/auth (open)"
+Proxy --> NotifAPI      : "JWT required"
+Proxy --> UploadAPI     : "JWT required"
+Proxy --> CompAPI       : "COMPANY only"
+Proxy --> HealthAPI     : "SUPERADMIN only"
+
+' Pages call Server Actions
+Seeker    --> ActSeeker : "profile · save · follow · apply"
+Seeker    --> ActJobs   : "get feed / search"
+CompanyUI --> ActJobs   : "create · edit · close jobs"
+CompanyUI --> ActApps   : "review applicants"
+AdminUI   --> ActAdmin  : "approve · suspend · delete"
+Public    --> ActAuth   : "signup · forgot / reset pwd"
+
+' Actions use lib utilities
+ActAuth  --> LibAuth
+ActAuth  --> LibEmail
+ActJobs  --> LibMatch  : "rank applicants"
+ActJobs  --> LibNotif  : "notify followers on new job"
+ActApps  --> LibNotif  : "notify seeker on status change"
+ActAdmin --> LibNotif  : "notify on approve/suspend"
+
+' All server code hits DB via LibDB
+ActAuth  --> LibDB
+ActJobs  --> LibDB
+ActApps  --> LibDB
+ActSeeker--> LibDB
+ActAdmin --> LibDB
+
+AuthAPI  --> LibAuth
+NotifAPI --> LibDB
+UploadAPI --> LibUpload
+CompAPI  --> LibDB
+
+' Lib → Models
+LibDB    --> MUser
+LibDB    --> MProfile
+LibDB    --> MJob
+LibDB    --> MApp
+LibDB    --> MSocial
+LibDB    --> MNotif
+LibDB    --> MAudit
+LibNotif --> MNotif
+
+' External services
+LibUpload --> FS   : "writeFile()"
+LibEmail  --> Email : "emails.send()"
+LibDB     --> DB    : "mongoose.connect()"
+
+@enduml

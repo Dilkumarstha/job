@@ -7,6 +7,8 @@ interface NotificationMetadata {
   jobId?: string;
   jobTitle?: string;
   companyName?: string;
+  seekerId?: string;
+  seekerName?: string;
 }
 
 export async function createNotification(

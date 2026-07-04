@@ -341,3 +341,167 @@ export async function deleteSeeker(targetUserId: string) {
   revalidatePath("/admin/users");
   return { ok: true };
 }
+
+// ─── Dashboard analytics data ────────────────────────────────────────────────
+
+/** Applications over the last 7 months broken down by status */
+export async function getApplicationsOverTime() {
+  const session = await auth();
+  if (!session || session.user.role !== "SUPERADMIN") return { error: "Unauthorized" };
+  await connectDB();
+
+  const months: { label: string; start: Date; end: Date }[] = [];
+  const now = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const end = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+    months.push({
+      label: d.toLocaleString("default", { month: "short" }),
+      start: d,
+      end,
+    });
+  }
+
+  const results = await Promise.all(
+    months.map(({ start, end }) =>
+      Promise.all([
+        Application.countDocuments({ appliedAt: { $gte: start, $lt: end } }),
+        Application.countDocuments({ appliedAt: { $gte: start, $lt: end }, status: "APPROVED" }),
+        Application.countDocuments({ appliedAt: { $gte: start, $lt: end }, status: "REJECTED" }),
+      ])
+    )
+  );
+
+  return {
+    labels: months.map((m) => m.label),
+    applied:   results.map(([a]) => a),
+    accepted:  results.map(([, b]) => b),
+    rejected:  results.map(([, , c]) => c),
+  };
+}
+
+/** New user registrations for each day of the current week (Mon–Sun) */
+export async function getWeeklySignups() {
+  const session = await auth();
+  if (!session || session.user.role !== "SUPERADMIN") return { error: "Unauthorized" };
+  await connectDB();
+
+  const now = new Date();
+  // Start of current week (Monday)
+  const dayOfWeek = now.getDay(); // 0=Sun
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - ((dayOfWeek + 6) % 7));
+  monday.setHours(0, 0, 0, 0);
+
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const start = new Date(monday);
+    start.setDate(monday.getDate() + i);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 1);
+    return { label: start.toLocaleString("default", { weekday: "short" }), start, end };
+  });
+
+  const counts = await Promise.all(
+    days.map(({ start, end }) =>
+      User.countDocuments({ createdAt: { $gte: start, $lt: end }, deletedAt: null })
+    )
+  );
+
+  return { labels: days.map((d) => d.label), counts };
+}
+
+/** Job counts grouped by category */
+export async function getJobsByCategory() {
+  const session = await auth();
+  if (!session || session.user.role !== "SUPERADMIN") return { error: "Unauthorized" };
+  await connectDB();
+
+  const rows = await Job.aggregate([
+    { $group: { _id: "$category", count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 8 },
+  ]);
+
+  return {
+    labels: rows.map((r) => r._id ?? "Uncategorized"),
+    counts: rows.map((r) => r.count as number),
+  };
+}
+
+/** Company counts by verification status */
+export async function getCompanyStatusCounts() {
+  const session = await auth();
+  if (!session || session.user.role !== "SUPERADMIN") return { error: "Unauthorized" };
+  await connectDB();
+
+  const [verified, pending, suspended] = await Promise.all([
+    User.countDocuments({ role: "COMPANY", status: "ACTIVE",           deletedAt: null }),
+    User.countDocuments({ role: "COMPANY", status: "PENDING_APPROVAL", deletedAt: null }),
+    User.countDocuments({ role: "COMPANY", status: "SUSPENDED",        deletedAt: null }),
+  ]);
+
+  return { verified, pending, suspended };
+}
+
+/** Recent audit log entries for the activity feed */
+export async function getRecentActivityFeed(limit = 6) {
+  const session = await auth();
+  if (!session || session.user.role !== "SUPERADMIN") return { error: "Unauthorized" };
+  await connectDB();
+
+  const logs = await AuditLog.find()
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .populate("targetUserId", "email role")
+    .lean();
+
+  return logs.map((log) => {
+    const target = log.targetUserId as { email?: string; role?: string } | null;
+    return {
+      id:     (log._id as { toString(): string }).toString(),
+      action: log.action,
+      target: target?.email ?? "—",
+      role:   target?.role  ?? "",
+      reason: log.reason,
+      createdAt: log.createdAt.toISOString(),
+    };
+  });
+}
+
+/** Most recent companies (all statuses) for the table */
+export async function getRecentCompanies(limit = 5) {
+  const session = await auth();
+  if (!session || session.user.role !== "SUPERADMIN") return { error: "Unauthorized" };
+  await connectDB();
+
+  const users = await User.find({ role: "COMPANY", deletedAt: null })
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .lean();
+
+  const userIds = users.map((u) => u._id);
+
+  const [profiles, jobCounts] = await Promise.all([
+    CompanyProfile.find({ userId: { $in: userIds } }).lean(),
+    Job.aggregate([
+      { $match: { companyId: { $in: userIds } } },
+      { $group: { _id: "$companyId", count: { $sum: 1 } } },
+    ]),
+  ]);
+
+  const profileMap  = new Map(profiles.map((p)  => [p.userId.toString(),  p]));
+  const jobCountMap = new Map(jobCounts.map((j) => [j._id.toString(), j.count as number]));
+
+  return users.map((u) => {
+    const id = u._id.toString();
+    const profile = profileMap.get(id);
+    return {
+      id,
+      name:     profile?.companyName ?? u.email,
+      industry: profile?.industry    ?? "—",
+      status:   u.status as "ACTIVE" | "PENDING_APPROVAL" | "SUSPENDED",
+      joinedAt: u.createdAt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      jobs:     jobCountMap.get(id) ?? 0,
+    };
+  });
+}

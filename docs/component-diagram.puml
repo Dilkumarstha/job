@@ -1,0 +1,552 @@
+@startuml HireHub Component Diagram
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam componentStyle rectangle
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #CCCCCC
+  BorderThickness 1.5
+  FontColor #222222
+  ArrowColor #555555
+}
+
+skinparam package {
+  BackgroundColor #F4F8FF
+  BorderColor #8899CC
+  BorderThickness 1.5
+  FontColor #1A2A6C
+  FontStyle bold
+}
+
+skinparam interface {
+  BackgroundColor #FFFDE7
+  BorderColor #F9A825
+}
+
+skinparam database {
+  BackgroundColor #E8F5E9
+  BorderColor #388E3C
+  FontColor #1B5E20
+}
+
+skinparam cloud {
+  BackgroundColor #FCE4EC
+  BorderColor #C62828
+}
+
+skinparam arrow {
+  Color #555555
+  FontSize 9
+}
+
+title HireHub — Complete Component Diagram\nNext.js 16 App Router • MongoDB Atlas • Auth.js v5 • Tailwind CSS v4
+
+' ══════════════════════════════════════════════════════════════════
+' EXTERNAL ACTORS / INFRASTRUCTURE
+' ══════════════════════════════════════════════════════════════════
+
+actor "JobSeeker\n(Browser)" as Seeker
+actor "Company\n(Browser)" as Company
+actor "SuperAdmin\n(Browser)" as Admin
+
+database "MongoDB Atlas\n(Free Tier)" as MongoDB {
+  [users]
+  [seekerprofiles]
+  [companyprofiles]
+  [jobs]
+  [applications]
+  [savedjobs]
+  [companyfollows]
+  [auditlogs]
+  [notifications]
+}
+
+cloud "Resend API\n(Email Service)" as Resend
+
+folder "public/uploads/\n(Local FS)" as FileSystem {
+  [/resumes/]
+  [/logos/]
+}
+
+' ══════════════════════════════════════════════════════════════════
+' NEXT.JS EDGE LAYER — RBAC PROXY (proxy.ts)
+' ══════════════════════════════════════════════════════════════════
+
+package "Edge / Proxy Layer" {
+  component "proxy.ts\n(RBAC Middleware)" as Proxy {
+    portout " /admin/*\n→ SUPERADMIN only" as p_admin
+    portout " /company/*\n→ COMPANY + ACTIVE" as p_company
+    portout " /seeker/*\n→ JOBSEEKER + ACTIVE" as p_seeker
+    portout " /api/*\n→ JWT required" as p_api
+  }
+}
+
+' ══════════════════════════════════════════════════════════════════
+' APP ROUTER — PAGE GROUPS
+' ══════════════════════════════════════════════════════════════════
+
+package "(public) Route Group — No Auth Required" {
+  component "Landing Page\n/ (HomePageClient)" as PubHome
+  component "Login Page\n/login" as PubLogin
+  component "Signup Page\n/signup\n/signup/seeker\n/signup/company" as PubSignup
+  component "Job Detail Page\n/jobs/[jobId]" as PubJobDetail
+  component "Company Profile Page\n/companies/[companyId]" as PubCompanyPage
+  component "Forgot Password\n/forgot-password" as PubForgot
+  component "Reset Password\n/reset-password" as PubReset
+  component "Suspended Page\n/suspended" as PubSuspended
+}
+
+package "(seeker) Route Group — JOBSEEKER Only" {
+  component "Feed Page\n/seeker/feed" as SFeed
+  component "Search Page\n/seeker/search" as SSearch
+  component "Saved Jobs Page\n/seeker/saved" as SSaved
+  component "Seeker Profile Page\n/seeker/profile\n(ProfileShell + ProfileForm)" as SProfile
+  component "Onboarding Page\n/seeker/onboarding" as SOnboard
+  component "Applications Page\n/seeker/applications\n(+ ApplicationPipeline)" as SApps
+  component "Following Page\n/seeker/following" as SFollowing
+}
+
+package "(company) Route Group — COMPANY + ACTIVE" {
+  component "Company Dashboard\n/company/dashboard" as CDash
+  component "My Jobs Page\n/company/jobs" as CJobs
+  component "Post New Job\n/company/jobs/new\n(PostJobForm)" as CNewJob
+  component "Edit Job Page\n/company/jobs/[id]/edit\n(PostJobForm)" as CEditJob
+  component "Applicants Page\n/company/jobs/[id]/applicants\n(ApplicationPipeline)" as CApplicants
+  component "Company Profile Page\n/company/profile\n(ProfileForm)" as CProfile
+}
+
+package "(admin) Route Group — SUPERADMIN Only" {
+  component "Admin Dashboard\n/admin/dashboard\n(Stats + Charts)" as ADash
+  component "Users Management\n/admin/users\n(Search + Paginate)" as AUsers
+  component "Company Approvals\n/admin/companies\n(Approve / Reject)" as ACompanies
+  component "Audit Log\n/admin/audit\n(Paginated Log)" as AAudit
+}
+
+' ══════════════════════════════════════════════════════════════════
+' SHARED COMPONENTS
+' ══════════════════════════════════════════════════════════════════
+
+package "Shared Components (src/components/)" {
+
+  package "Layout" {
+    component "NavbarServer\n(Server Component)\nReads session + profiles" as NavServer
+    component "Navbar\n(Client Component)\nRole-aware nav links" as NavClient
+  }
+
+  package "Job Components" {
+    component "JobCard\n(Client)\ntoggleSaveJob action" as JobCard
+    component "ApplyModal\n(Client)\n/api/upload → applyToJob" as ApplyModal
+    component "PostJobForm\n(Client)\ncreateJob / updateJob" as PostJobForm
+    component "ApplicationPipeline\n(Client)\nStatus stepper UI" as AppPipeline
+    component "RelatedJobsSection\n(Server)" as RelatedJobs
+    component "SearchFilters\n(Client)" as SearchFilters
+    component "TopSearchBar\n(Client)" as TopSearchBar
+  }
+
+  package "Company Components" {
+    component "CompanyJobsList\n(Client)\nClient-side filter + sort\n+ matchScore display" as CompJobsList
+    component "FollowCompanyButton\n(Client)\ntoggleFollowCompany" as FollowBtn
+    component "FollowCompanyMini\n(Client)" as FollowMini
+  }
+
+  package "Notifications" {
+    component "NotificationBell\n(Client)\nPolls /api/notifications\nevery 30s" as NotifBell
+  }
+
+  package "UI Primitives" {
+    component "TagInput" as TagInput
+    component "Skeleton" as Skeleton
+    component "Motion\n(Framer variants)" as Motion
+    component "EmptyState" as EmptyState
+    component "AnimatedSection" as AnimSection
+  }
+
+  component "ChangePassword\n(Client)\nchangePassword action" as ChgPwd
+}
+
+' ══════════════════════════════════════════════════════════════════
+' API ROUTE HANDLERS (src/app/api/)
+' ══════════════════════════════════════════════════════════════════
+
+package "API Route Handlers (src/app/api/)" {
+  component "NextAuth Handler\nGET POST /api/auth/[...nextauth]" as AuthAPI
+  component "Notifications API\nGET DELETE /api/notifications\nPOST /api/notifications/read" as NotifAPI
+  component "Upload API\nPOST /api/upload\n(multipart/form-data)" as UploadAPI
+  component "Company Profile API\nPATCH /api/company/profile" as CompProfileAPI
+  component "Health Check API\nGET /api/health\n(SUPERADMIN only)" as HealthAPI
+}
+
+' ══════════════════════════════════════════════════════════════════
+' SERVER ACTIONS (src/actions/)
+' ══════════════════════════════════════════════════════════════════
+
+package "Server Actions (src/actions/)" {
+
+  package "auth.ts" {
+    component "signupSeeker()" as ActSignupSeeker
+    component "signupCompany()" as ActSignupCompany
+    component "requestPasswordReset()" as ActForgotPwd
+    component "resetPassword()" as ActResetPwd
+    component "changePassword()" as ActChgPwd
+  }
+
+  package "jobs.ts" {
+    component "createJob()" as ActCreateJob
+    component "updateJob()" as ActUpdateJob
+    component "closeJob()" as ActCloseJob
+    component "getCompanyJobs()" as ActGetCompanyJobs
+    component "getJobApplicants()\n+ matchScore ranking" as ActGetApplicants
+    component "getActiveJobs()\n(filtered + sorted)" as ActGetActiveJobs
+  }
+
+  package "applications.ts" {
+    component "reviewApplicant()" as ActReview
+    component "getSeekerApplications()" as ActGetSeekerApps
+    component "checkApplied()" as ActCheckApplied
+  }
+
+  package "seeker.ts" {
+    component "completeOnboarding()" as ActOnboard
+    component "updateSeekerProfile()" as ActUpdateSeeker
+    component "applyToJob()" as ActApplyJob
+    component "toggleSaveJob()" as ActToggleSave
+    component "toggleFollowCompany()" as ActToggleFollow
+    component "getSeekerData()" as ActGetSeekerData
+  }
+
+  package "admin.ts" {
+    component "getAdminStats()" as ActAdminStats
+    component "listUsers()" as ActListUsers
+    component "approveCompany()" as ActApprove
+    component "rejectCompany()" as ActReject
+    component "suspendUser()" as ActSuspend
+    component "reactivateUser()" as ActReactivate
+    component "softDeleteUser()\n(cascade: jobs+apps)" as ActDelete
+    component "getAuditLogs()" as ActAuditLogs
+    component "getPendingCompanies()" as ActPending
+    component "deleteSeeker()" as ActDeleteSeeker
+  }
+}
+
+' ══════════════════════════════════════════════════════════════════
+' LIBRARY / UTILITIES (src/lib/)
+' ══════════════════════════════════════════════════════════════════
+
+package "Library (src/lib/)" {
+
+  component "auth.ts\n(NextAuth v5 Config)\nCredentials + JWT strategy\nrole+status in token" as LibAuth
+
+  component "db.ts\n(Mongoose Connection)\nGlobal cache, TLS,\n10s timeout" as LibDB
+
+  component "matchScore.ts\nWeighted algorithm:\n0.35×category + 0.30×skills\n+0.10×location + 0.10×exp\n+0.10×recency + 0.05×follow" as LibMatch
+
+  component "upload.ts\nsaveFile()\nPDF resume ≤5MB\nImage logo ≤2MB\n→ public/uploads/" as LibUpload
+
+  component "email.ts\nsendPasswordResetEmail()\n(Resend API / demo mode)" as LibEmail
+
+  component "notifications.ts\ncreateNotification()\ncreateBulkNotifications()" as LibNotif
+
+  component "constants.ts\nJOB_CATEGORIES\nEXPERIENCE_LEVELS\nJOB_TYPES\nEXP_LEVEL_ORDER" as LibConst
+
+  package "validations/ (Zod Schemas)" {
+    component "auth.ts\nlogin, signupSeeker\nsignupCompany, forgotPwd\nresetPwd, changePwd" as ValAuth
+    component "job.ts\ncreateJob, updateJob" as ValJob
+    component "profile.ts\nupdateSeeker\nonboarding\nupdateCompany" as ValProfile
+    component "application.ts\nreviewApplication" as ValApp
+    component "admin.ts\nsuspendUser" as ValAdmin
+  }
+}
+
+' ══════════════════════════════════════════════════════════════════
+' MONGOOSE MODELS (src/models/)
+' ══════════════════════════════════════════════════════════════════
+
+package "Mongoose Models (src/models/)" {
+  component "User\nroles: SUPERADMIN|JOBSEEKER|COMPANY\nstatuses: ACTIVE|SUSPENDED|PENDING_APPROVAL\nresetPasswordToken/Expires" as MUser
+  component "SeekerProfile\nuserId→User\nfullName, bio, resumeUrl\nexperienceLevel, location\nskills[], interests[]" as MSeeker
+  component "CompanyProfile\nuserId→User\ncompanyName, description\nlogoUrl, industry, website\nverified: boolean" as MCompany
+  component "Job\ncompanyId→User\ntitle, description, category\nskillsRequired[], experienceLevel\nsalaryMin/Max, location\njobType, deadline, status" as MJob
+  component "Application\njobId→Job, seekerId→User\nstatus: PENDING|REVIEWED|APPROVED|REJECTED\ncoverLetter, phone, resumeUrl" as MApp
+  component "SavedJob\nseekerId→User, jobId→Job\n(unique compound index)" as MSavedJob
+  component "CompanyFollow\nseekerId→User, companyId→User\n(unique compound index)" as MFollow
+  component "AuditLog\nadminId→User, targetUserId→User\naction, reason, metadata" as MAudit
+  component "Notification\nuserId→User\ntype, message, read, metadata\n(jobId, jobTitle, companyName)" as MNotif
+}
+
+' ══════════════════════════════════════════════════════════════════
+' CONNECTIONS — ACTORS → PROXY → PAGES
+' ══════════════════════════════════════════════════════════════════
+
+Seeker --> Proxy : "HTTP requests"
+Company --> Proxy : "HTTP requests"
+Admin --> Proxy : "HTTP requests"
+
+Proxy --> SFeed : "JWT JOBSEEKER"
+Proxy --> SSearch : "JWT JOBSEEKER"
+Proxy --> SSaved : "JWT JOBSEEKER"
+Proxy --> SProfile : "JWT JOBSEEKER"
+Proxy --> SOnboard : "JWT JOBSEEKER"
+Proxy --> SApps : "JWT JOBSEEKER"
+Proxy --> SFollowing : "JWT JOBSEEKER"
+
+Proxy --> CDash : "JWT COMPANY+ACTIVE"
+Proxy --> CJobs : "JWT COMPANY+ACTIVE"
+Proxy --> CNewJob : "JWT COMPANY+ACTIVE"
+Proxy --> CEditJob : "JWT COMPANY+ACTIVE"
+Proxy --> CApplicants : "JWT COMPANY+ACTIVE"
+Proxy --> CProfile : "JWT COMPANY+ACTIVE"
+
+Proxy --> ADash : "JWT SUPERADMIN"
+Proxy --> AUsers : "JWT SUPERADMIN"
+Proxy --> ACompanies : "JWT SUPERADMIN"
+Proxy --> AAudit : "JWT SUPERADMIN"
+
+Proxy --> PubHome
+Proxy --> PubLogin
+Proxy --> PubSignup
+Proxy --> PubJobDetail
+Proxy --> PubCompanyPage
+Proxy --> PubForgot
+Proxy --> PubReset
+Proxy --> PubSuspended
+
+Proxy --> AuthAPI : "/api/auth/*\n(exempt from JWT check)"
+Proxy --> NotifAPI : "JWT required"
+Proxy --> UploadAPI : "JWT required"
+Proxy --> CompProfileAPI : "JWT COMPANY"
+Proxy --> HealthAPI : "JWT SUPERADMIN"
+
+' ══════════════════════════════════════════════════════════════════
+' CONNECTIONS — SHARED COMPONENTS ↔ PAGES
+' ══════════════════════════════════════════════════════════════════
+
+NavServer --> NavClient : "renders (Server→Client)"
+NavServer --> LibDB : "reads profile"
+NavServer --> MSeeker : "findOne by userId"
+NavServer --> MCompany : "findOne by userId"
+NavServer --> LibAuth : "auth()"
+
+SFeed --> JobCard : "renders job list"
+SFeed --> ActGetActiveJobs : "fetch"
+SFeed --> ActGetSeekerData : "fetch seeker"
+SSearch --> SearchFilters
+SSearch --> ActGetActiveJobs
+SSearch --> JobCard
+SSaved --> JobCard
+SProfile --> ChgPwd : "renders"
+SProfile --> ActUpdateSeeker
+SApps --> AppPipeline : "per application"
+SApps --> ActGetSeekerApps
+SOnboard --> ActOnboard
+SFollowing --> FollowBtn
+SFollowing --> CompJobsList
+
+PubJobDetail --> ApplyModal : "renders if JOBSEEKER"
+PubJobDetail --> RelatedJobs
+PubCompanyPage --> CompJobsList
+PubCompanyPage --> FollowBtn
+PubSignup --> ActSignupSeeker
+PubSignup --> ActSignupCompany
+PubForgot --> ActForgotPwd
+PubReset --> ActResetPwd
+
+CDash --> ActGetCompanyJobs : "stats"
+CJobs --> ActGetCompanyJobs
+CNewJob --> PostJobForm : "renders"
+CEditJob --> PostJobForm : "renders"
+CApplicants --> AppPipeline
+CApplicants --> ActGetApplicants
+CProfile --> CompProfileAPI : "PATCH"
+
+ADash --> ActAdminStats
+AUsers --> ActListUsers
+AUsers --> ActSuspend
+AUsers --> ActReactivate
+AUsers --> ActDelete
+AUsers --> ActDeleteSeeker
+ACompanies --> ActPending
+ACompanies --> ActApprove
+ACompanies --> ActReject
+AAudit --> ActAuditLogs
+
+PostJobForm --> ActCreateJob : "createJob() action"
+PostJobForm --> ActUpdateJob : "updateJob() action"
+PostJobForm --> TagInput
+PostJobForm --> LibConst : "JOB_CATEGORIES\nEXP_LEVELS\nJOB_TYPES"
+ApplyModal --> UploadAPI : "POST /api/upload"
+ApplyModal --> ActApplyJob
+JobCard --> ActToggleSave : "toggleSaveJob()"
+FollowBtn --> ActToggleFollow : "toggleFollowCompany()"
+FollowMini --> ActToggleFollow
+ChgPwd --> ActChgPwd : "changePassword()"
+NotifBell --> NotifAPI : "GET every 30s\nPOST /read\nDELETE"
+CompJobsList --> JobCard
+CompJobsList --> LibConst
+
+' ══════════════════════════════════════════════════════════════════
+' CONNECTIONS — ACTIONS → LIB UTILITIES
+' ══════════════════════════════════════════════════════════════════
+
+ActSignupSeeker --> LibDB
+ActSignupSeeker --> ValAuth
+ActSignupCompany --> LibDB
+ActSignupCompany --> ValAuth
+ActForgotPwd --> LibDB
+ActForgotPwd --> LibEmail : "sendPasswordResetEmail()"
+ActResetPwd --> LibDB
+ActResetPwd --> ValAuth
+ActChgPwd --> LibDB
+ActChgPwd --> ValAuth
+
+ActCreateJob --> LibDB
+ActCreateJob --> ValJob
+ActCreateJob --> LibNotif : "createBulkNotifications()\nNEW_JOB_POSTED → followers"
+ActUpdateJob --> LibDB
+ActUpdateJob --> ValJob
+ActCloseJob --> LibDB
+ActGetApplicants --> LibMatch : "matchScore() per applicant"
+ActGetApplicants --> LibDB
+ActGetActiveJobs --> LibDB
+
+ActReview --> LibDB
+ActReview --> ValApp
+ActReview --> LibNotif : "createNotification()\nAPPLICATION_STATUS_CHANGED"
+ActGetSeekerApps --> LibDB
+ActCheckApplied --> LibDB
+
+ActOnboard --> LibDB
+ActOnboard --> ValProfile
+ActUpdateSeeker --> LibDB
+ActUpdateSeeker --> ValProfile
+ActApplyJob --> LibDB
+ActToggleSave --> LibDB
+ActToggleFollow --> LibDB
+ActGetSeekerData --> LibDB
+
+ActAdminStats --> LibDB
+ActListUsers --> LibDB
+ActApprove --> LibDB
+ActApprove --> LibNotif : "createNotification()\nCOMPANY_APPROVED"
+ActReject --> LibDB
+ActReject --> LibNotif : "createNotification()\nCOMPANY_REJECTED"
+ActSuspend --> LibDB
+ActSuspend --> ValAdmin
+ActSuspend --> LibNotif : "createNotification()\nACCOUNT_SUSPENDED"
+ActReactivate --> LibDB
+ActReactivate --> LibNotif : "createNotification()\nACCOUNT_REACTIVATED"
+ActDelete --> LibDB
+ActDeleteSeeker --> LibDB
+ActAuditLogs --> LibDB
+ActPending --> LibDB
+
+' ══════════════════════════════════════════════════════════════════
+' CONNECTIONS — ACTIONS → MODELS (DB operations)
+' ══════════════════════════════════════════════════════════════════
+
+ActSignupSeeker --> MUser
+ActSignupSeeker --> MSeeker
+ActSignupCompany --> MUser
+ActSignupCompany --> MCompany
+ActForgotPwd --> MUser
+ActResetPwd --> MUser
+ActChgPwd --> MUser
+
+ActCreateJob --> MJob
+ActCreateJob --> MFollow : "find followers"
+ActCreateJob --> MCompany : "read companyName"
+ActUpdateJob --> MJob
+ActCloseJob --> MJob
+ActCloseJob --> MSavedJob : "deleteMany"
+ActGetCompanyJobs --> MJob
+ActGetApplicants --> MJob
+ActGetApplicants --> MApp
+ActGetApplicants --> MSeeker
+ActGetActiveJobs --> MJob
+ActGetActiveJobs --> MUser
+
+ActReview --> MApp
+ActGetSeekerApps --> MApp
+ActCheckApplied --> MApp
+
+ActOnboard --> MSeeker
+ActUpdateSeeker --> MSeeker
+ActApplyJob --> MApp
+ActToggleSave --> MSavedJob
+ActToggleFollow --> MFollow
+ActGetSeekerData --> MSeeker
+ActGetSeekerData --> MSavedJob
+ActGetSeekerData --> MFollow
+
+ActAdminStats --> MUser
+ActAdminStats --> MJob
+ActAdminStats --> MApp
+ActListUsers --> MUser
+ActApprove --> MUser
+ActApprove --> MCompany
+ActApprove --> MAudit
+ActReject --> MUser
+ActReject --> MAudit
+ActSuspend --> MUser
+ActSuspend --> MAudit
+ActReactivate --> MUser
+ActReactivate --> MAudit
+ActDelete --> MUser
+ActDelete --> MCompany
+ActDelete --> MJob
+ActDelete --> MApp
+ActDelete --> MAudit
+ActDeleteSeeker --> MUser
+ActDeleteSeeker --> MSeeker
+ActDeleteSeeker --> MAudit
+ActAuditLogs --> MAudit
+ActPending --> MUser
+ActPending --> MCompany
+
+' ══════════════════════════════════════════════════════════════════
+' CONNECTIONS — API HANDLERS → LIB + MODELS
+' ══════════════════════════════════════════════════════════════════
+
+AuthAPI --> LibAuth : "re-exports handlers"
+LibAuth --> LibDB : "connectDB()"
+LibAuth --> MUser : "find + bcrypt verify"
+
+NotifAPI --> LibAuth : "auth()"
+NotifAPI --> LibDB
+NotifAPI --> MNotif
+
+UploadAPI --> LibAuth : "auth()"
+UploadAPI --> LibUpload : "saveFile()"
+
+CompProfileAPI --> LibAuth : "auth()"
+CompProfileAPI --> LibDB
+CompProfileAPI --> MCompany
+CompProfileAPI --> ValProfile
+
+HealthAPI --> LibAuth : "auth() + SUPERADMIN check"
+HealthAPI --> LibDB
+
+LibNotif --> LibDB
+LibNotif --> MNotif
+LibEmail --> Resend : "emails.send()"
+LibUpload --> FileSystem : "writeFile()"
+
+' ══════════════════════════════════════════════════════════════════
+' CONNECTIONS — MODELS → MONGODB
+' ══════════════════════════════════════════════════════════════════
+
+MUser --> MongoDB
+MSeeker --> MongoDB
+MCompany --> MongoDB
+MJob --> MongoDB
+MApp --> MongoDB
+MSavedJob --> MongoDB
+MFollow --> MongoDB
+MAudit --> MongoDB
+MNotif --> MongoDB
+
+LibDB --> MongoDB : "mongoose.connect()\nMONGODB_URI"
+
+@enduml

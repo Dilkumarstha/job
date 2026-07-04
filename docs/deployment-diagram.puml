@@ -1,0 +1,34 @@
+@startuml
+title HireHub — Deployment Diagram
+
+actor User as Browser
+
+node Client {
+  [Web Browser]
+}
+
+node "Vercel / Next.js" as Server {
+  [Next.js App]
+  [Server Actions]
+  [API Routes]
+  [Proxy]
+}
+
+node External {
+  [Resend API]
+}
+
+node Storage {
+  [Uploads Directory]
+}
+
+database "MongoDB Atlas" as DB {
+  [Collections]
+}
+
+Browser --> [Next.js App] : HTTPS
+[Next.js App] --> DB : Mongoose
+[Next.js App] --> [Resend API] : HTTP
+[Next.js App] --> [Uploads Directory] : read/write
+
+@enduml
